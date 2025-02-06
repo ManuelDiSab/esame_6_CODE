@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class contatti_recapiti extends Model
+{
+    use HasFactory,SoftDeletes;
+
+    protected $table = 'anagrafica_utenti';
+    protected $primaryKey = 'idAnag';
+
+    protected $fillable = [
+        'idUser',
+        'cod_fis',
+        'dataNascita',
+        'sesso'
+    ];
+
+}
