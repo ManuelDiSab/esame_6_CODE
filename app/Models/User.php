@@ -23,11 +23,13 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'nome',
+        'idRuolo',
         'cognome',
         'utente',
         'password',
         'secretJWT',
         'salt',
+        'inizioSfida'
         ];
 
     /**
@@ -38,7 +40,6 @@ class User extends Authenticatable
     protected $attributes = [
         'idRuolo' => 1,
         'status' => 1,
-        'idAbbonamento' => 1
     ];
 
     /**
@@ -48,7 +49,6 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'remember_token',
         'user',
         'secretJWT',
         'salt',

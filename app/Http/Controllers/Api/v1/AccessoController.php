@@ -5,16 +5,15 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Helpers\AppHelpers;
 use App\Http\Controllers\Controller;
-use App\Models\Configurazione;
+use App\Models\Anagrafica_utenti;
 use App\Models\Configurazioni;
+use App\Models\contatti_recapiti;
 use App\Models\contattiAccessi;
 use App\Models\ContattoSessioni;
-use App\Models\Crediti;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class AccessoController extends Controller
@@ -39,16 +38,6 @@ class AccessoController extends Controller
     }
 
 
-
-
-
-    /**
-     * GEt JWT via given credentials
-     *
-     * @return Illuminate\Http\JsonResponse
-     */
-
-
     protected static function controlloUtente($user)
     {
         $salt = hash('sha512', trim(Str::random(200)));
@@ -58,7 +47,7 @@ class AccessoController extends Controller
             $utente->secretJWT =  hash('sha512', trim(Str::random(256)));
             $utente->salt = $salt;
             $utente->save();
-            // return response()->json(["message" => "utente trovato, ritorno del sale", "salt" => $salt]);
+            return response()->json(["message" => "utente trovato, ritorno del sale", "salt" => $salt]);
         } else {
             $salt = hash('sha512', trim(Str::random(200)));
             $dati = array('salt'=>$salt);
@@ -125,23 +114,41 @@ class AccessoController extends Controller
             'password' => 'required|string|confirmed|min:6',
             'dataNascita' => 'date|required',
             'sesso' => 'between:0,1|required', // 1 maschio, 0 femmina
+            'tel'=>'required | string | min:6'
 
         ]);
         if ($validatore->fails()) {
             return response()->json($validatore->errors()->toJson(), 400);
+        }else{
+            $user = User::create([
+                'nome'=>$request->nome,
+                'cognome'=>$request->cognome,
+                'password' => hash('sha512', ($request->password)),
+                'utente' => hash('sha512', ($request->utente)),
+                'salt' => hash('sha512', trim(Str::random(200))),
+                'secretJWT' => hash('sha512', trim(Str::random(256))),
+            ]);
+            $id = $user->idUser;   
+            $anag = Anagrafica_utenti::create([
+                'sesso'=>$request->sesso,
+                'dataNascita'=>$request->dataNascita,
+                'idUser'=>$id
+            ]
+            );
+            $recapiti = contatti_recapiti::create([
+                'tel'=> $request->tel,
+                'idUser'=> $id
+            ]
+            );
+            
+            return response()->json([
+                'message' => 'Utente creato con successo',
+                'utente' => $user,
+                'anagrafica utente'=> $anag,
+                'recapiti'=> $recapiti
+            ], 201);
         }
-        $user = User::create(array_merge(
-            $validatore->validated(),
-            ['password' => hash('sha512', ($request->password))],
-            ['utente' => hash('sha512', ($request->utente))],
-            ['salt' => hash('sha512', trim(Str::random(200)))],
-            ['secretJWT' => hash('sha512', trim(Str::random(256)))],
-        ));
-        $id = $user->idUser;
-        return response()->json([
-            'message' => 'Utente creato con successo',
-            'utente' => $user,
-        ], 201);
+        
     }
     /**
      * Funzione per il Logout (invalida il token)

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('contatto_accessi', function (Blueprint $table) {
+        Schema::create('contatti_accessi', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger("idUser")->unsigned();
             $table->unsignedBigInteger("autenticato")->unsigned();

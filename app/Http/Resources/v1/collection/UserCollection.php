@@ -14,6 +14,16 @@ class UserCollection extends ResourceCollection
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        $tmp = parent::toArray($request);
+        $tmp = array_map(array($this, 'getCampi'),$tmp);
+        return $tmp;
+    }
+    protected function getCampi($item){
+        return [
+        'nome' => $item['name'],
+        'cognome'=> $item['cognome'],
+        'idRuolo'=>$item['idRuolo'],
+        'idUser'=>$item['idUser']
+        ];
     }
 }

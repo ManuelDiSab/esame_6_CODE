@@ -12,8 +12,20 @@ class NazioniCollection extends ResourceCollection
      *
      * @return array<int|string, mixed>
      */
-    public function toArray(Request $request): array
+    public function toArray(Request $request)
     {
-        return parent::toArray($request);
+        $tmp = parent::toArray($request);
+        $tmp = array_map(array($this, 'getCampi'),$tmp);
+        return $tmp;
+    }
+
+    protected function getCampi($item)
+    {
+        return [
+            'nome'=>$item['nome'],
+            'continente'=>$item['continente'],
+            'iso3'=>$item['iso3'],
+            'prefisso'=>$item['PrefissoTelefonico']
+        ];
     }
 }

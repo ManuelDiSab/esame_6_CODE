@@ -30,6 +30,7 @@ return new class extends Migration
             $table->string('password',255);
             $table->string('salt',256);
             $table->string('secretJWT',256);
+            $table->integer('inizioSfida');
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

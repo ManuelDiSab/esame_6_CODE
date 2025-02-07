@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('contatto_sessioni', function (Blueprint $table) {
             $table->id('idSessione');
             $table->unsignedBigInteger('idUser')->unsigned();
-            $table->tinyText('token');
-            $table->integer('scadenzaSessione');
+            $table->string('token',255);
+            $table->integer('inizioSessione');
             $table->timestamps();
             $table->softDeletes();
 

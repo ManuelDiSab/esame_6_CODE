@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\v1\resource;
+namespace App\Http\Resources\v1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -14,6 +14,19 @@ class ComuniResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        // return parent::toArray($request);
+
+        return $this->getCampi();
+    }
+
+    protected function getCampi()
+    {
+        return [
+            'idComune' => $this->idTipologiaIndirizzo,
+            'nome' => $this->nome,
+            'regione' => $this->regione,
+            'provincia' => $this->provincia,
+            'cap' => $this->cap
+        ];
     }
 }

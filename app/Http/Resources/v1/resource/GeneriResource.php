@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\v1\resource;
+namespace App\Http\Resources\v1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -14,6 +14,8 @@ class GeneriResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'nome'=> $this->nome
+        ];
     }
 }

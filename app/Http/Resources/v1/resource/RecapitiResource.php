@@ -1,24 +1,28 @@
 <?php
 
-namespace App\Http\Resources\v1;
+namespace App\Http\Resources\v1\resource;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserResource extends JsonResource
+class RecapitiResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
      *
      * @return array<string, mixed>
      */
-    public function toArray(Request $request): array
+    public function toArray(Request $request)
     {
+        return $this->getCampi();
+    }
+
+    protected function getCampi(){
+
         return [
-            'nome' => $this->name,
-            'cognome'=> $this->cognome,
-            'idRuolo'=>$this->idRuolo,
+            'tel'=>$this->tel,
             'idUser'=>$this->idUser
         ];
+
     }
 }

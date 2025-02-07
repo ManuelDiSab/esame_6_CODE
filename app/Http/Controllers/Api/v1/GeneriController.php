@@ -1,49 +1,94 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\v1;
 
-use App\Models\generi;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\v1\GeneriStoreRequest;
+use App\Http\Requests\v1\GeneriUpdateRequest;
+use App\Http\Resources\v1\collection\GeneriCollection;
+use App\Http\Resources\v1\GeneriResource;
+use App\Models\generi;
+use Illuminate\Support\Facades\Gate;
 
 class GeneriController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Funzione per prendere tutte le risorse
+     * 
      */
-    public function index()
-    {
-        //
+    public function index(){
+    if(Gate::allows('user')){
+            // return response()->json(generi::all(),200);
+            return new GeneriCollection(generi::all('nome'));
+        }
     }
 
     /**
-     * Store a newly created resource in storage.
+     * 
+     * 
      */
-    public function store(Request $request)
-    {
-        //
+    public function show(generi $genere){
+        $resource = new GeneriResource($genere);
+        if($resource){
+            return response()->json($resource, 200);
+        }else{
+            return response()->json(['message' => 'Genere non trovato'], 404);
+        }
+
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(generi $generi)
-    {
-        //
-    }
 
     /**
-     * Update the specified resource in storage.
+     * 
+     * 
      */
-    public function update(Request $request, generi $generi)
-    {
-        //
+    public function store(GeneriStoreRequest $request){
+        if(Gate::allows('admin')){
+            if(Gate::allows('attivo')){
+                $data = $request->validated();
+                $resource = generi::create($data);
+
+                $new =  new GeneriResource($resource);
+                return response()->json(["nuova risorsa"=> $new],201);
+            
+            }
+        }
     }
 
+
     /**
-     * Remove the specified resource from storage.
+     * 
+     * 
      */
-    public function destroy(generi $generi)
-    {
-        //
+    public function update(GeneriUpdateRequest $request, generi $genere){
+
+        if(Gate::allows('admin')){
+            if(Gate::allows('attivo')){
+                $data = $request->validated();
+                $genere -> fill($data);
+                $genere->save();
+                $new = new GeneriResource($genere); 
+ 
+                return response()->json(["risorsa" => $new], 200);      
+            }
+        }
     }
+
+
+    /**
+     * 
+     * 
+     */
+    public function destroy($idGenere){
+        $genere = generi::find($idGenere);
+        if($genere){
+            $genere->delete();
+            return response()->json(["message"=> 'genere cancellato correttamente'],200);
+        }else{
+            return response()->json(['message' => 'Genere non trovato'], 404);
+        }
+    }
+
 }
+

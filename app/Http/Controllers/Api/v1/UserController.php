@@ -1,49 +1,149 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\v1;
 
-use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\v1\UserUpdateRequest;
+use App\Http\Resources\v1\collection\UserCollection;
+use App\Http\Resources\v1\UserResource;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Unique;
 
 class UserController extends Controller
 {
+
     /**
-     * Display a listing of the resource.
+     * Funzione per mostrare la lista degli utenti
      */
-    public function index()
+    public function indexAdmin()
     {
-        //
+        if (Gate::allows('admin')) {
+            if (Gate::allows('attivo')) {
+                $collection =  User::all();
+                return new UserCollection($collection);
+            } else {
+                abort(403, "Il tuo account è disabilitato");
+            }
+        } else {
+            abort(403, "Ops! Non sei autorizzato!");
+        }
+    }
+
+    public function showAdmin(User $idUser)
+    {
+        if (Gate::allows('admin')) {
+            if (Gate::allows('attivo')) {
+                $user = new UserResource($idUser);
+                if (! $user) {
+                    return ["message" => "L'utente non esiste"];
+                }
+            } else {
+                abort(403, "Il tuo account è disabilitato");
+            }
+        } else {
+            abort(403, "Ops! Non sei autorizzato!");
+        }
+    }
+    /**
+     * mostra i dati dell'utente loggato
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function show()
+    {
+        return response()->json(Auth::user());
+    }
+    /**
+     * 
+     * 
+     * 
+     */
+    public function update(UserUpdateRequest $request)
+    {
+
+        if (Gate::allows('user')) {
+            if (Gate::allows('attivo')) {
+                $user = Auth::user();
+                $id= $user->idUser;
+                $data = $request->validated();
+                $validato = User::findOrFail($id)->fill($data);
+                $validato->save();
+                $new = new UserResource($validato);
+                return [
+                    'messaggio' => 'Modifiche completate con successo',
+                    'utente' => $new
+                ];
+            }
+            }
+        }
+    
+
+    /**
+     * 
+     * 
+     * 
+     */
+    public function updateAdmin(UserUpdateRequest $request, User $idUser)
+    {
+        if (Gate::allows('admin')) {
+            if (Gate::allows('attivo')) {
+                if ($idUser) {
+                    $data = $request->validated();
+                    $idUser->fill($data);
+                    $idUser->save();
+                    $new = new UserResource($idUser);
+
+                    return response()->json(["risorsa" => $new], 200);
+                } else {
+                    return response()->json(['message' => 'Utente non trovato'], 404);
+                }
+            }
+        }
     }
 
     /**
-     * Store a newly created resource in storage.
+     * 
+     * 
+     * 
      */
-    public function store(Request $request)
+    public function destroy()
     {
-        //
-    }
+        if (Gate::allows('user')) {
+            if (Gate::allows('attivo')) {
+                $user = Auth::user();
+                $id = $user->idUser;
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(User $user)
-    {
-        //
-    }
+                $utente = User::findOrFail($id);
+                $utente->delete();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, User $user)
-    {
-        //
+                return response()->json([
+                    "messaggio" => "Il tuo profilo è stato cancellato correttamente"
+                ], 204);
+            }
+        }
     }
-
     /**
-     * Remove the specified resource from storage.
+     * 
+     * 
+     * 
      */
-    public function destroy(User $user)
+    public function destroyAdmin(Request $request, $idUser)
     {
-        //
+        if (Gate::allows('user')) {
+            if (Gate::allows('attivo')) {
+                $utente = User::findOrFail($idUser);
+                $utente->delete();
+
+                return response()->json([
+                    "messaggio" => "Utente cancellato correttamente"
+                ], 204);
+            }
+        }
     }
 }

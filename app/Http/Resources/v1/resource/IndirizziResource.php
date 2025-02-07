@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources\v1\resource;
+namespace App\Http\Resources\v1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class IndirizziiResource extends JsonResource
+class indirizziResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,6 +14,15 @@ class IndirizziiResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            "idUser"=>$this->idUser,
+            "idTipologiaIndirizzo"=>$this->idTipologiaIndirizzo,
+            "idNazione"=>$this->idNazione,
+            "idComune"=>$this->idComune,
+            "indirizzo"=>$this->indirizzo,
+            "civico"=>$this->civico,
+            "cap"=>$this->cap,
+            "località"=>$this->località
+        ];
     }
 }

@@ -14,6 +14,7 @@ class contatti_recapiti extends Model
     protected $primaryKey = 'idRecapito';
 
     protected $fillable = [
+        'idUser',
         'tel'
     ];
 

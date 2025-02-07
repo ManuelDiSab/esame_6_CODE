@@ -1,49 +1,38 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\api\v1;
 
-use App\Models\nazioni;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\v1\collection\NazioniCollection;
+use App\Http\Resources\v1\NazioniResource;
+use App\Models\Nazione;
+use Illuminate\Support\Facades\Gate;
 
-class NazioniController extends Controller
+class nazioniController extends Controller
 {
-    /**
+        /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        if(Gate::allows('user')){
+            if(Gate::allows('attivo')){
+                $nazioni = Nazione::limit(100)->get();
+                return new NazioniCollection($nazioni);
+            }
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(nazioni $nazioni)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, nazioni $nazioni)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(nazioni $nazioni)
-    {
-        //
+    public function show(Nazione $nazione){
+        if(Gate::allows('user')){
+            if(Gate::allows('attivo')){
+                $resource = new NazioniResource($nazione);
+                if($resource) {
+                    return response()->json($resource, 200);
+                }else{
+                    return response()->json(['message' => 'Nazione non trovata'], 404);
+                }
+            }
+        }
     }
 }

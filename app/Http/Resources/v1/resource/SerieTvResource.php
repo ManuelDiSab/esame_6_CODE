@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\v1\resource;
+namespace App\Http\Resources\v1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -14,6 +14,12 @@ class SerieTvResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'titolo' => $this->titolo,
+            'trama' => $this->trama,
+            'n_stagioni' => $this->n_stagioni,
+            'anno_inizio' => $this->anno_inizio,
+            'anno_fine' => $this->anno_fine
+        ];
     }
 }
