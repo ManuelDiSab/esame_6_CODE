@@ -14,6 +14,7 @@ class Anagrafica_utenti extends Model
     protected $primaryKey = 'idAnag';
 
     protected $fillable = [
+        'idUser',
         'cod_fis',
         'dataNascita',
         'sesso'

@@ -10,14 +10,11 @@ class contatti_recapiti extends Model
 {
     use HasFactory,SoftDeletes;
 
-    protected $table = 'anagrafica_utenti';
-    protected $primaryKey = 'idAnag';
+    protected $table = 'contatti_recapiti';
+    protected $primaryKey = 'idRecapito';
 
     protected $fillable = [
-        'idUser',
-        'cod_fis',
-        'dataNascita',
-        'sesso'
+        'tel'
     ];
 
 }
