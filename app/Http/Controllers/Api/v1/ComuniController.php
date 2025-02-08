@@ -8,6 +8,7 @@ use App\Http\Requests\v1\ComuniUpdateRequest;
 use App\Http\Resources\v1\ComuniResource;
 use App\Models\Comuni;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class ComuniController extends Controller
@@ -63,6 +64,22 @@ class ComuniController extends Controller
     }
 
     /**
+     * Funzione oer ritornare l'elenco delle province
+     * 
+     *
+     * 
+     */
+    public function provinceCollection(){
+        if(Gate::allows('user')){
+            if(Gate::allows('attivo')){
+                $province = DB::table('comuni')->distinct()->get('provincia');
+                return response()->json($province,200);
+            }
+        }
+    }
+
+
+    /**
      * Update the specified resource in storage.
      */
     public function update(ComuniUpdateRequest $request,Comuni $comune)
@@ -96,6 +113,6 @@ class ComuniController extends Controller
                 }
             }
         }
-    }
+    }                                                                                                 
 }
 

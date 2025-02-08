@@ -21,9 +21,10 @@ class AccessoController extends Controller
 
 
     /**
-     * Create a new AuthController instance
+     * Funzione per effettuare un login
      *
-     * @return void
+     * @param string $user username 
+     * @param string $hash Hash di password e salt
      */
 
 
@@ -38,6 +39,10 @@ class AccessoController extends Controller
     }
 
 
+
+    /**
+     * Funzione per controllare l'utente che viene passato esista
+     */
     protected static function controlloUtente($user)
     {
         $salt = hash('sha512', trim(Str::random(200)));
@@ -56,9 +61,18 @@ class AccessoController extends Controller
         $dati = array("salt" => $salt);
         return AppHelpers::rispostaCustom($dati);
     }
+
+
+
+    /**
+     * Funzione per controllare la password che viene passata
+     * @param string $user username 
+     * @param string $hash hash di salt e password
+     * 
+     */
     protected static function ControlloPassword($user, $hash)
     {
-        if (User::EsisteUtenteValidoPerIlLogin($user)) {
+        if (User::EsisteUtenteValidoPerIlLogin($user)) {//Controllo se esiste effettivamente l'utente
             $utente = User::where('utente', $user)->first();
             $secret = $utente->secretJWT;
             $inizioSfida = $utente->inizioSfida;
@@ -101,7 +115,8 @@ class AccessoController extends Controller
             }
     }
     /**
-     * Funzione per registrare un utente
+     * Funzione per registrare un nuovo utente
+     * 
      * 
      * @return \Illuminate\Http\JsonResponse
      */
@@ -162,7 +177,9 @@ class AccessoController extends Controller
     }
 
     /**
+     * Funzione per verificare il token 
      * 
+     * @param string $token token da verificare
      */
     public static function verificaToken($token)
     {

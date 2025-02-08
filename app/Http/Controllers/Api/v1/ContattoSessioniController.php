@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\contatto_sessioni;
+use App\Models\ContattoSessioni;
 use Illuminate\Http\Request;
 
 class ContattoSessioniController extends Controller
@@ -26,7 +26,7 @@ class ContattoSessioniController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(contatto_sessioni $contatto_sessioni)
+    public function show(ContattoSessioni $ContattoSessioni)
     {
         //
     }
@@ -34,7 +34,7 @@ class ContattoSessioniController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, contatto_sessioni $contatto_sessioni)
+    public function update(Request $request, ContattoSessioni $ContattoSessioni)
     {
         //
     }
@@ -42,7 +42,7 @@ class ContattoSessioniController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(contatto_sessioni $contatto_sessioni)
+    public function destroy(ContattoSessioni $ContattoSessioni)
     {
         //
     }

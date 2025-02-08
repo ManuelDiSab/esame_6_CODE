@@ -1,23 +1,17 @@
 <?php
 
-
-use App\Http\Controllers\Api\v1\AbbonamentiController;
+use App\Http\Controllers\Api\v1\ConfigurazioniController;
 use App\Http\Controllers\Api\v1\AccessoController;
 use App\Http\Controllers\Api\v1\ComuniController;
-use App\Http\Controllers\Api\v1\ConfigurazioniController;
 use App\Http\Controllers\Api\v1\UserController;
-use App\Http\Controllers\Api\v1\CreditiController;
 use App\Http\Controllers\api\v1\episodiController;
 use App\Http\Controllers\Api\v1\FilmController;
 use App\Http\Controllers\Api\v1\GeneriController;
 use App\Http\Controllers\Api\v1\IndirizziController;
-use App\Http\Controllers\Api\v1\LingueController;
 use App\Http\Controllers\api\v1\nazioniController;
 use App\Http\Controllers\api\v1\serieTvController;
 use App\Http\Controllers\Api\v1\TipologiaIndirizziController;
-use App\Http\Controllers\Api\v1\TraduzioniController;
 use App\Http\Middleware\EnsureTokenIsValid;
-use App\Models\Configurazioni;
 use Illuminate\Support\Facades\Route;
 
 
@@ -40,6 +34,9 @@ Route::middleware([EnsureTokenIsValid::class])->group(function () {
     Route::put(_VERS . '/profili', [UserController::class, 'updateAdmin']);
     Route::delete(_VERS . '/profili/{idUser}', [UserController::class, 'destroyAdmin']);
 
+    //Route per la gestione delle configurzioni
+    Route::get(_VERS . '/configurazioni', [ConfigurazioniController::class, 'index']);
+    Route::get(_VERS . '/Configurazioni/{configurazioni}', [ConfigurazioniController::class, 'show']);
 
     //Route per indirizzi e tipologie indirizzi
     Route::post(_VERS . '/Tipo-inidirizzo', [TipologiaIndirizziController::class, 'store']);
@@ -89,6 +86,7 @@ Route::middleware([EnsureTokenIsValid::class])->group(function () {
     //Route per i comuni e le nazioni
     Route::get(_VERS . '/comuni', [ComuniController::class, 'index']);
     Route::get(_VERS . '/comuni/{comune}', [ComuniController::class, 'show']);
+    Route::get(_VERS . '/province', [ComuniController::class, 'provinceCollection']);
     Route::get(_VERS . '/nazioni', [nazioniController::class, 'index']);
     Route::get(_VERS . '/nazioni/{id}', [nazioniController::class, 'show']);
 

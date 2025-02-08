@@ -36,7 +36,7 @@ class AppHelpers{
     }
 
     /**
-     * ciframento
+     * Funzione per cifrare
      * @param string $testo da cifrare
      * @param string $chiave usata per cifrare
      */
@@ -47,8 +47,7 @@ class AppHelpers{
     }
 
     /**
-     * 
-     * deciframento
+     * Funzione per decifrare
      * 
      * @param string $testoDecifrato testo da decifrare
      * @param string $chiave chiave usata per la decifrazione
@@ -65,7 +64,7 @@ class AppHelpers{
 
 
     /**
-     * Funzione per unire password e salt per fare un HASH
+     * Funzione per unire password e salt per poi fare un HASH
      * 
      *@param string $password
      *@param string $salt
@@ -79,7 +78,7 @@ class AppHelpers{
 
 
     /**
-     * Toglie il required alle rules di aggiornamento 
+     * Funzione che crea il token 
      * 
      * @param string $secretJWT chiave di cifratura
      * @param integer $idContatto
@@ -95,8 +94,8 @@ class AppHelpers{
         $t = time(); // prendo il current time e lo metto nella variabile $t
         $nbf = ($usaDa == null) ? $t:$usaDa;
         $exp = ($scadenza == null) ? $nbf + $maxTime : $scadenza;
-        $idRuolo = $recordContatto->idRuolo;
-        $arr = array(
+        $idRuolo = $recordContatto->idRuolo; //prendo l'id ruolo dell'utente
+        $arr = array( //creo un array e ci inserisco i dati utili del token
             'iss'=>'',
             'aud'=>null,
             'iat'=>$t,
@@ -104,7 +103,7 @@ class AppHelpers{
             'exp'=>$exp,
             'data'=>array(
                 'idUser'=>$idUser,
-                'status'=>$recordContatto->status,
+                'status'=>$recordContatto->status, //Status attivo o non attivo (bannato, sospeso)
                 'idRuolo'=>$idRuolo,
                 'nome_completo'=>trim($recordContatto->nome . " " . $recordContatto->cognome)
             )
@@ -133,6 +132,7 @@ class AppHelpers{
     }
 
     /**
+     * Funzione per validare il token passato
      * 
      */
     public static function validaToken($token, $jwt, $sessione){
