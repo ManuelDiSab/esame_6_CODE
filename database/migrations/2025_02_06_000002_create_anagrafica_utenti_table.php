@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('anagrafica_utenti', function (Blueprint $table) {
             $table->id('idAnag');
             $table->unsignedBigInteger('idUser')->unsigned();
+            $table->unsignedBigInteger('idNazione')->unsigned();
             $table->string('cod_fis',50)->nullable();
             $table->date('dataNascita');
             $table->unsignedTinyInteger('sesso')->unsigned();
@@ -21,6 +22,7 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->foreign("idUser")->references("idUser")->on("users");
+            $table->foreign('idNazione')->references('idNazione')->on('nazioni');
 
         });
     }

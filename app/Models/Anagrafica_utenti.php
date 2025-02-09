@@ -15,6 +15,7 @@ class Anagrafica_utenti extends Model
 
     protected $fillable = [
         'idUser',
+        'idNazione',
         'cod_fis',
         'dataNascita',
         'sesso'

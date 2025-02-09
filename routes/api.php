@@ -23,6 +23,7 @@ if (!defined("_VERS")) {
 Route::post(_VERS . '/logout', [AccessoController::class, 'logout']);
 Route::get(_VERS . '/accedi/{user}/{hash?}', [AccessoController::class, 'login']);
 Route::post(_VERS . '/register', [AccessoController::class, 'register']);
+Route::get(_VERS . '/comuni', [ComuniController::class, 'index']);
 
 //Api protette dall'autenticazione 
 Route::middleware([EnsureTokenIsValid::class])->group(function () {
@@ -84,7 +85,6 @@ Route::middleware([EnsureTokenIsValid::class])->group(function () {
     Route::delete(_VERS . '/indirizzi/{idIndirizzo}', [IndirizziController::class, 'destroy']);
 
     //Route per i comuni e le nazioni
-    Route::get(_VERS . '/comuni', [ComuniController::class, 'index']);
     Route::get(_VERS . '/comuni/{comune}', [ComuniController::class, 'show']);
     Route::get(_VERS . '/province', [ComuniController::class, 'provinceCollection']);
     Route::get(_VERS . '/nazioni', [nazioniController::class, 'index']);
