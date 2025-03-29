@@ -4,7 +4,7 @@ namespace App\Http\Requests\v1;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class FilmStoreRequest extends FormRequest
+class EpisodiStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -19,15 +19,17 @@ class FilmStoreRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+    public function rules()
     {
         return [
-            'idGenere'=>'required|integer',
-            'titolo'=>'required|string|max:45',
-            'trama'=>'string|max:255',
-            'regista'=>'required|max:45|string',
-            'durata'=>'required|string|max:10',
-            'anno'=>'required|string'
+            'idSerie'=>'required|integer',
+            'titolo' => 'required|string|max:45',
+            'durata' => 'string|max:255',
+            'numero' => 'required|integer',
+            'stagione' => 'required|integer',
+            'voto' => 'string|max:3|min:0',
+            'trama'=>'string|max:500',
+            'path' => 'required|string|min:2'
         ];
     }
 }

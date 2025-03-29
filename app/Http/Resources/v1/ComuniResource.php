@@ -14,19 +14,24 @@ class ComuniResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // return parent::toArray($request);
-
         return $this->getCampi();
     }
 
     protected function getCampi()
     {
         return [
-            'idComune' => $this->idTipologiaIndirizzo,
+            'idComune' => $this->idComune,
             'nome' => $this->nome,
             'regione' => $this->regione,
             'provincia' => $this->provincia,
-            'cap' => $this->cap
+            'cap' => $this->cap,
+            'siglaAuto'=>$this->siglaAuto,
+            'metropolitana'=>$this->metropolitana,
+            'codCat'=>$this->codCat,
+            'capoluogo'=>$this->capoluogo,
+            'multicap'=>$this->multicap,
+            'capFine'=>$this->capFine,
+            'capInizio'=>$this->capInizio
         ];
     }
 }

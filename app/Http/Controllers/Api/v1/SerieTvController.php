@@ -5,7 +5,7 @@ namespace App\Http\Controllers\api\v1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\SerieTVStoreRequest;
 use App\Http\Requests\v1\SerieTVUpdateRequest;
-use App\Http\Resources\v1\collection\SerieTvCollection;
+use App\Http\Resources\v1\SerieTvCollection;
 use App\Http\Resources\v1\SerieTvResource;
 use App\Models\serieTv;
 use Illuminate\Support\Facades\Gate;
@@ -22,7 +22,7 @@ class serieTvController extends Controller
             if(Gate::allows('user')){
                 $resource = serieTv::all();
                 $serie = new SerieTvCollection($resource);
-                return response()->json($serie, 200);
+                return $serie;
             }
         }
     }
@@ -32,11 +32,13 @@ class serieTvController extends Controller
      * 
      * 
      */
-    public function show( serieTv $serie)
+    public function show($serie)
     {
         if(Gate::allows('attivo')){
             if(Gate::allows('user')){
-                $resource = new SerieTvResource($serie);
+                $resource = serieTv::where('titolo',$serie)
+                ->get()
+                ->first();
                 if($resource){
                     return response()->json($resource, 200);
                 }else{
@@ -45,6 +47,37 @@ class serieTvController extends Controller
             }
         }
     }
+
+    public function seriePerGenere($genere){
+        $resource = serieTv::where('idGenere',$genere)->get();
+        if($resource){
+            return $resource;
+        }else{
+            return response('Nessun genere trovato', 404);
+        }
+    }   
+
+
+    /**
+     * Funzione per la ricerca delle serie tv attraverso il titolo
+     */
+    public function ricerca()
+    {
+        if(Gate::allows('attivo')){
+            if(Gate::allows('user')){
+                $titolo = request('titolo');
+                if($titolo){
+                        $serie = serieTv::where('titolo','like',"{$titolo}%")
+                        ->get();
+                        return new SerieTvCollection($serie);
+                    }else{
+                       return null;
+                    }
+
+            }
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      * 

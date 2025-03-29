@@ -15,11 +15,15 @@ class SerieTvResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'idSerie'=>$this->idSerie,
+            'idGenere'=>$this->idGenere,
             'titolo' => $this->titolo,
             'trama' => $this->trama,
             'n_stagioni' => $this->n_stagioni,
             'anno_inizio' => $this->anno_inizio,
-            'anno_fine' => $this->anno_fine
+            'anno_fine' => $this->anno_fine,
+            'path'=>$this->path,
+            'voto'=>$this->voto
         ];
     }
 }

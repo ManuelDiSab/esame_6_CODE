@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Api\v1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\FilmStoreRequest;
 use App\Http\Requests\v1\FilmUpdateRequest;
-use App\Http\Resources\v1\collection\FilmCollection;
+use App\Http\Resources\v1\FilmCollection;
 use App\Http\Resources\v1\FilmResource;
 use App\Models\Film;
+use App\Models\generi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class FilmController extends Controller
@@ -18,18 +20,36 @@ class FilmController extends Controller
      * 
      * @return JsonResource
      */
-    public function index(){
+    public function index(Request $request){
         if(Gate::allows('attivo')){
             if(Gate::allows('user')){
+                $titolo = request('titolo');
 
-                 return new FilmCollection(Film::all(
-                    "idFilm",
-                    "idGenere",
-                    "titolo",
-                    "regista",
-                    "durata",
-                    "anno",
-                ));
+                $genere = $request->input('genere');
+                if($genere){       
+                    $film =Film::all()->where('idGenere',$genere);
+                }else if($titolo){
+                    $film = Film::where('titolo','like',"{$titolo}%")
+                    ->get();
+                    return new FilmCollection($film);
+                }else{
+                    $film  = Film::all();
+                   return new FilmCollection($film); 
+                }
+            }
+        }
+    }
+
+
+
+    /**
+     * Funzione che ritorna la lista dei film appartenenti al genere passato
+     * 
+     */
+    public function indexGenere( $idGenere){
+        if(Gate::allows('attivo')){
+            if(Gate::allows('user')){
+                 return new FilmCollection(Film::where('idGenere','=',$idGenere)->get());
             }
         }
     }
@@ -43,15 +63,36 @@ class FilmController extends Controller
     {
         if(Gate::allows('attivo')){
             if(Gate::allows('user')){
-                $resource = new FilmResource($film);
-                if($resource){
-                    return response()->json($resource, 200);
-                }else{
-                    return response()->json(['message' => 'Film non trovato'], 404);
-                }
+                return new FilmResource($film);
             }
         }
     }
+
+
+    /**
+     * 
+     * 
+     * 
+     */
+    public function ricerca()
+    {
+        if(Gate::allows('attivo')){
+            if(Gate::allows('user')){
+                $titolo = request('titolo');
+                if($titolo){
+                        $film = Film::where('titolo','like',"{$titolo}%")
+                        ->get();
+                        return new FilmCollection($film);
+                    }else{
+                       return null;
+                    }
+
+            }
+        }
+    }
+
+
+
     /**
      * Store a newly created resource in storage.
      * 
@@ -64,8 +105,9 @@ class FilmController extends Controller
 
                 $data = $request->validated();
                 $resource = Film::create($data);
-
                 $new =  new FilmResource($resource);
+                $img = $new->path_img;
+                move_uploaded_file($img,'C:\Users\manue\Desktop\NUOVO ESAME\Esame-6-angular\src\assets\film_cover');
                 return response()->json(["nuova risorsa"=> $new],201);
             }
         }
@@ -85,7 +127,6 @@ class FilmController extends Controller
                 $film -> fill($data);
                 $film->save();
                 $new = new FilmResource($film); 
-
                 return response()->json(["risorsa" => $new], 200);      
             }
         }
@@ -107,5 +148,13 @@ class FilmController extends Controller
             }
         }
     }
+
+
+    /**
+     * 
+     * 
+     * 
+     */
+    
 
 }

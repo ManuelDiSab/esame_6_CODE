@@ -5,8 +5,12 @@ namespace App\Http\Controllers\Api\v1;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\UserUpdateRequest;
-use App\Http\Resources\v1\collection\UserCollection;
+use App\Http\Resources\v1\UserCollection;
 use App\Http\Resources\v1\UserResource;
+use App\Models\Anagrafica_utenti;
+use App\Models\contatti_recapiti;
+use App\Models\ContattoSessioni;
+use App\Models\Indirizzo;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -15,18 +19,32 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Unique;
 
+use function Termwind\parse;
+
 class UserController extends Controller
 {
 
     /**
      * Funzione per mostrare la lista degli utenti
+     * Può essere fatta una query string per visualizzare utenti attivi o inattivi
      */
     public function indexAdmin()
     {
         if (Gate::allows('admin')) {
             if (Gate::allows('attivo')) {
-                $collection =  User::all();
-                return new UserCollection($collection);
+                $request= request('status');
+                if($request == 'attivi'){
+                    $collection = User::all()->where('status', 1);
+                    return new UserCollection($collection);
+                }
+                else if($request === 'inattivi'){
+                    $collection = User::where('status',0)->get();
+                    return new UserCollection($collection);
+                }else if(!$request){
+                    $collection =  User::all();
+                    return new UserCollection($collection);
+                }
+
             } else {
                 abort(403, "Il tuo account è disabilitato");
             }
@@ -35,16 +53,19 @@ class UserController extends Controller
         }
     }
 
-    public function showAdmin(User $idUser)
+    public function showAdmin($idUser)
     {
         if (Gate::allows('admin')) {
             if (Gate::allows('attivo')) {
-                $user = new UserResource($idUser);
-                if (! $user) {
+                $user = User::findOrFail($idUser);
+                $data = new UserResource($user);
+                if ($data) {
+                    return $data;
+                }else{
                     return ["message" => "L'utente non esiste"];
                 }
             } else {
-                abort(403, "Il tuo account è disabilitato");
+                abort(403, "Il tuo account non è attivo");
             }
         } else {
             abort(403, "Ops! Non sei autorizzato!");
@@ -89,17 +110,17 @@ class UserController extends Controller
      * 
      * 
      */
-    public function updateAdmin(UserUpdateRequest $request, User $idUser)
+    public function updateStatus(UserUpdateRequest $request,$idUser)
     {
         if (Gate::allows('admin')) {
             if (Gate::allows('attivo')) {
                 if ($idUser) {
-                    $data = $request->validated();
-                    $idUser->fill($data);
-                    $idUser->save();
-                    $new = new UserResource($idUser);
-
-                    return response()->json(["risorsa" => $new], 200);
+                    $data =$request->validated();
+                    $user = User::findOrFail($idUser)->fill($data);
+                    // $user->fill($data);
+                    $user->save();
+                    $new = new UserResource($user);
+                    return $new;        
                 } else {
                     return response()->json(['message' => 'Utente non trovato'], 404);
                 }
@@ -118,12 +139,20 @@ class UserController extends Controller
             if (Gate::allows('attivo')) {
                 $user = Auth::user();
                 $id = $user->idUser;
-
+                //Cancello tutti i dati riguardo all'utente
                 $utente = User::findOrFail($id);
                 $utente->delete();
+                $anagrafica = Anagrafica_utenti::where('idUser',$id);
+                $anagrafica->delete();
+                $recapiti = contatti_recapiti::where('idUser',$id);
+                $recapiti->delete();
+                $sessioni = ContattoSessioni::where('idUser',$id);
+                $sessioni->delete();
+                $indirizzi = Indirizzo::where('idUser',$id);
+                $indirizzi->delete();
 
                 return response()->json([
-                    "messaggio" => "Il tuo profilo è stato cancellato correttamente"
+                    "messaggio" => "Il tuo profilo è stato"
                 ], 204);
             }
         }

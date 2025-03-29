@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\v1\collection;
+namespace App\Http\Resources\v1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
@@ -20,10 +20,11 @@ class UserCollection extends ResourceCollection
     }
     protected function getCampi($item){
         return [
-        'nome' => $item['name'],
+        'nome' => $item['nome'],
         'cognome'=> $item['cognome'],
         'idRuolo'=>$item['idRuolo'],
-        'idUser'=>$item['idUser']
+        'idUser'=>$item['idUser'],  
+        'status'=>$item['status']
         ];
     }
 }

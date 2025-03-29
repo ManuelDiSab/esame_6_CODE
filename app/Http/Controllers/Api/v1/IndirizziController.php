@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\indirizzoStoreRequest;
 use App\Http\Requests\v1\indirizzoUpdateRequest;
-use App\Http\Resources\v1\collection\indirizziCollection;
+use App\Http\Resources\v1\indirizziCollection;
 use App\Http\Resources\v1\indirizziResource;
 use App\Models\Indirizzo;
 use Illuminate\Support\Facades\Auth;
@@ -21,19 +21,22 @@ class IndirizziController extends Controller
      */
     public function index()
     {
-        if(Gate::allows('admin')){
+        if(Gate::allows('utente')){
             if(Gate::allows('attivo'))
-            {
-                return new indirizziCollection(Indirizzo::all());
+            {   
+                $user = Auth::user();
+                $id= $user->idUser;
+                return new indirizziCollection(Indirizzo::where('idUser',$id));
             }
         }
     }
 
-    public function show(Indirizzo $indirizzo){
+    public function show( $idIndirizzo){
         if(Gate::allows('admin')){
             if(Gate::allows('attivo')){
+                $indirizzo = Indirizzo::where('idIndirizzo',$idIndirizzo)->first();
                 $resource = new indirizziResource($indirizzo);
-                    return response()->json($resource, 200);
+                return $resource;
             }
         }
     }
@@ -49,7 +52,6 @@ class IndirizziController extends Controller
             if(Gate::allows('attivo')){
                 $data = $request->validated();
                 $resource = Indirizzo::create($data);
-
                 $new =  new indirizziResource($resource);
                 return response()->json(["nuova risorsa"=> $new],201);
             }
@@ -65,11 +67,13 @@ class IndirizziController extends Controller
     public function update(indirizzoUpdateRequest $request,Indirizzo $indirizzo){
         if(Gate::allows('admin')){
             if(Gate::allows('attivo')){
+                $user = Auth::user();
+                $id = $user->idUser;
                 $data = $request->validated();
+                $indirizzo = Indirizzo::where('idUser',$id);
                 $indirizzo -> fill($data);
                 $indirizzo->save();
                 $new = new indirizziResource($indirizzo); 
- 
                 return response()->json(["risorsa" => $new], 200);    
                 }                
             }

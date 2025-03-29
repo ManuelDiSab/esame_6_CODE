@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources\v1\collection;
+namespace App\Http\Resources\v1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class GeneriCollection extends ResourceCollection
+class SerieTvCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -14,6 +14,10 @@ class GeneriCollection extends ResourceCollection
      */
     public function toArray(Request $request): array
     {
+        // $tmp = parent::toArray($request);
+        // $tmp = array_map(array($this, 'getCampi'),$tmp);
+        // return $tmp;
         return parent::toArray($request);
     }
+
 }

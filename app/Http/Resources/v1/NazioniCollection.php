@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\v1\collection;
+namespace App\Http\Resources\v1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
@@ -17,15 +17,17 @@ class NazioniCollection extends ResourceCollection
         $tmp = parent::toArray($request);
         $tmp = array_map(array($this, 'getCampi'),$tmp);
         return $tmp;
+        // return parent::toArray($request);
     }
 
     protected function getCampi($item)
     {
         return [
+            'idNazione'=>$item['idNazione'],
             'nome'=>$item['nome'],
             'continente'=>$item['continente'],
             'iso3'=>$item['iso3'],
-            'prefisso'=>$item['PrefissoTelefonico']
+            'PrefissoTelefonico'=>$item['prefisso']
         ];
     }
 }

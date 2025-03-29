@@ -4,7 +4,7 @@ namespace App\Http\Requests\v1;
 
 use App\Helpers\AppHelpers;
 
-class UserUpdateRequest extends UserStoreRequest
+class AnagraficaUtentiUpdateRequest extends AnagraficaUtentiStoreRequest
 {
     /**
      * Determine if the user is authorized to make this request.

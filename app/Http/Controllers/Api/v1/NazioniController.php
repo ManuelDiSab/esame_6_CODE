@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\api\v1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\v1\collection\NazioniCollection;
+use App\Http\Resources\v1\NazioniCollection;
 use App\Http\Resources\v1\NazioniResource;
 use App\Models\Nazione;
 use Illuminate\Support\Facades\Gate;
@@ -15,12 +15,13 @@ class nazioniController extends Controller
      */
     public function index()
     {
-        if(Gate::allows('user')){
-            if(Gate::allows('attivo')){
-                $nazioni = Nazione::limit(100)->get();
+        // if(Gate::allows('user')){
+        //     if(Gate::allows('attivo')){
+                $nazioni = Nazione::get()   ;
                 return new NazioniCollection($nazioni);
-            }
-        }
+                // return $nazioni;
+    //     }
+    // }
     }
 
     public function show(Nazione $nazione){

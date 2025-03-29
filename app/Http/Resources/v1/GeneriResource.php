@@ -15,7 +15,8 @@ class GeneriResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'nome'=> $this->nome
+            'idGenere'=> $this->idGenere,
+            'nome'=> $this->nome,
         ];
     }
 }

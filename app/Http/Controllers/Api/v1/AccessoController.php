@@ -10,11 +10,14 @@ use App\Models\Configurazioni;
 use App\Models\contatti_recapiti;
 use App\Models\contattiAccessi;
 use App\Models\ContattoSessioni;
+use App\Models\Indirizzo;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+
+use function Laravel\Prompts\error;
 
 class AccessoController extends Controller
 {
@@ -23,7 +26,7 @@ class AccessoController extends Controller
     /**
      * Funzione per effettuare un login
      *
-     * @param string $user username 
+     * @param string $user username
      * @param string $hash Hash di password e salt
      */
 
@@ -52,7 +55,7 @@ class AccessoController extends Controller
             $utente->secretJWT =  hash('sha512', trim(Str::random(256)));
             $utente->salt = $salt;
             $utente->save();
-            return response()->json(["message" => "utente trovato, ritorno del sale", "salt" => $salt]);
+            // return response()->json(["message" => "utente trovato, ritorno del sale", "salt" => $salt]);
         } else {
             $salt = hash('sha512', trim(Str::random(200)));
             $dati = array('salt'=>$salt);
@@ -66,9 +69,9 @@ class AccessoController extends Controller
 
     /**
      * Funzione per controllare la password che viene passata
-     * @param string $user username 
+     * @param string $user username
      * @param string $hash hash di salt e password
-     * 
+     *
      */
     protected static function ControlloPassword($user, $hash)
     {
@@ -116,8 +119,8 @@ class AccessoController extends Controller
     }
     /**
      * Funzione per registrare un nuovo utente
-     * 
-     * 
+     *
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function register(Request $request)
@@ -127,10 +130,18 @@ class AccessoController extends Controller
             'cognome' => 'required|string|between:2,30',
             'utente' => 'required|string|min:6',
             'password' => 'required|string|confirmed|min:6',
-            'dataNascita' => 'date|required',
-            'sesso' => 'between:0,1|required', // 1 maschio, 0 femmina
-            'tel'=>'required | string | min:6'
-
+            'dataNascita' => 'string|required',
+            'sesso' => 'between:"0","1"|required | string', // 1 maschio, 0 femmina
+            'tel'=>'required | string | min:8 | max:12',
+            'codFis'=>'required | string',
+            'comuneNascita'=>'required | string ',
+            'provincia'=>'required | string',
+            'comune'=>'required | string',
+            'nazione'=>'required | string',
+            'cap'=>'required | string',
+            'indirizzo'=>'required | string',
+            'civico'=>'required | string',
+            'tipologiaIndirizzo'=>'required | string'
         ]);
         if ($validatore->fails()) {
             return response()->json($validatore->errors()->toJson(), 400);
@@ -143,11 +154,16 @@ class AccessoController extends Controller
                 'salt' => hash('sha512', trim(Str::random(200))),
                 'secretJWT' => hash('sha512', trim(Str::random(256))),
             ]);
-            $id = $user->idUser;   
+            $id = $user->idUser;
+            $sesso = (int)$request->sesso;
+            $nazione = (int)$request->nazione;
             $anag = Anagrafica_utenti::create([
-                'sesso'=>$request->sesso,
+                'sesso'=>$sesso,
                 'dataNascita'=>$request->dataNascita,
-                'idUser'=>$id
+                'comuneNascita'=>$request->comuneNascita,
+                'idUser'=>$id,
+                'cod_fis'=>$request->codFis,
+                'idNazione'=>$nazione
             ]
             );
             $recapiti = contatti_recapiti::create([
@@ -155,19 +171,32 @@ class AccessoController extends Controller
                 'idUser'=> $id
             ]
             );
-            
+            $idTipologia = (int)$request->tipologiaIndirizzo;
+            $comune = (int)$request->comune;
+            $indirizzi = Indirizzo::create([
+                'indirizzo'=>$request->indirizzo,
+                'civico'=>$request->civico,
+                'idTipologiaIndirizzo'=>$idTipologia,
+                'idUser'=>$id,
+                'idNazione'=>$nazione,
+                'idComune'=>$comune,
+                'cap'=>$request->cap,
+                'provincia'=>$request->provincia
+            ]);
+
             return response()->json([
                 'message' => 'Utente creato con successo',
                 'utente' => $user,
                 'anagrafica utente'=> $anag,
-                'recapiti'=> $recapiti
+                'recapiti'=> $recapiti,
+                'indirizzi'=>$indirizzi
             ], 201);
         }
-        
+
     }
     /**
      * Funzione per il Logout (invalida il token)
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function logout()
@@ -177,15 +206,15 @@ class AccessoController extends Controller
     }
 
     /**
-     * Funzione per verificare il token 
-     * 
+     * Funzione per verificare il token
+     *
      * @param string $token token da verificare
      */
     public static function verificaToken($token)
     {
         $rit = null;
         $sessione = ContattoSessioni::datiSessione($token);
-        if ($sessione != null) {
+        if ($sessione !== null) {
             $inizioSessione = $sessione->inizioSessione;
             $durataSessione = Configurazioni::LeggiValore('durataSessione');
             $scadenzaSessione = $inizioSessione + $durataSessione   ;

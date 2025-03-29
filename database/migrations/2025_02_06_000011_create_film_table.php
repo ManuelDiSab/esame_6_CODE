@@ -18,11 +18,13 @@ return new class extends Migration
             $table->string('trama', 255)->nullable();
             $table->string('regista',45);
             $table->string('durata',10);
+            $table->string('voto',10);
             $table->string('anno',4);
+            $table->string('path_img',100);
             $table->timestamps();
             $table->softDeletes();
-
             $table->foreign('idGenere')->references('idGenere')->on('generi');
+
         });
     }
 

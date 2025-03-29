@@ -5,11 +5,9 @@ namespace App\Http\Controllers\api\v1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\EpisodiStoreRequest;
 use App\Http\Requests\v1\EpisodiUpdateRequest;
-use App\Http\Resources\v1\collection\EpisodiCollection;
+use App\Http\Resources\v1\EpisodiCollection;
 use App\Http\Resources\v1\EpisodiResource;
 use App\Models\episodi;
-use App\Models\serieTv;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
@@ -24,9 +22,14 @@ class episodiController extends Controller
         if(Gate::allows('attivo')){
             if(Gate::allows('user')){
                 // $resource = episodi::where('idSerie',$idSerie)->get();
-                $resource = DB::table('episodi')->where('idSerie','=',$idSerie)->get(['idEpisodio','durata','numero','titolo','stagione']);
-                $new =  new EpisodiCollection($resource);
-                return response()->json($resource, 200);
+                $request = request('stagione');
+                if($request){
+                    $resource = episodi::all()->where('stagione','=',$request);
+                    return new EpisodiCollection($resource);
+                }else{
+                    $resource = DB::table('episodi')->where('idSerie','=',$idSerie)->get();
+                    return new EpisodiCollection($resource);   
+                }
             }
         }
     }
@@ -40,10 +43,9 @@ class episodiController extends Controller
     {
         if(Gate::allows('attivo')){
             if(Gate::allows('user')){
-                $resource = episodi::where('idSerie',$idSerie)->where('idEpisodio',$episodio)->get();
-                // $ep = new EpisodiResource($resource);
-                // return $ep;
-            return response()->json($resource, 200);
+                $resource = episodi::where('idSerie',$idSerie)->where('idEpisodio',$episodio)->first();
+                $ep = new EpisodiResource($resource);
+                return $ep;
             }
         }
     }
@@ -79,8 +81,8 @@ class episodiController extends Controller
                 $episodio -> fill($data);
                 $episodio->save();
                 $new = new EpisodiResource($episodio); 
- 
-                return response()->json(["risorsa" => $new], 200);  
+                return $data;
+                // return response()->json(["risorsa" => $new], 200);  
             }
         }
     }

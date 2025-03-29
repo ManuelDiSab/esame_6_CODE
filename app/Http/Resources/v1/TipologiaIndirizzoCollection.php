@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Resources\v1\collection;
+namespace App\Http\Resources\v1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class SerieTvCollection extends ResourceCollection
+class TipologiaIndirizzoCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
      *
      * @return array<int|string, mixed>
      */
-    public function toArray(Request $request): array
+    public function toArray(Request $request)
     {
         $tmp = parent::toArray($request);
         $tmp = array_map(array($this, 'getCampi'),$tmp);
@@ -21,11 +21,8 @@ class SerieTvCollection extends ResourceCollection
 
     protected function getCampi($item){
         return [
-            'titolo'=>$item['titolo'],
-            'trama'=>$item['trama'],
-            'n_stagioni'=>$item['n_stagioni'],
-            'anno_inizio'=>$item['anno_inizio'],
-            'anno_fine'=>$item['anno_fine']
+        "idTipologiaIndirizzi"=>$item['idTipologiaIndirizzi'],
+        "nome"=>$item['nome']
         ];
     }
 }

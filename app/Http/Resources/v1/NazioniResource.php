@@ -15,6 +15,7 @@ class NazioniResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'idNazione'=>$this->idNazione,
             'nome'=>$this->nome,
             'continente'=>$this->continente,
             'iso3'=>$this->iso3,

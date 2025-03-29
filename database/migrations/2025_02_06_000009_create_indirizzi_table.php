@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('indirizzo', 255);
             $table->string('civico', 15)->nullable();
             $table->string('località', 255)->nullable();
+            $table->string('provincia',50);
             $table->softDeletes();
             $table->timestamps();
             

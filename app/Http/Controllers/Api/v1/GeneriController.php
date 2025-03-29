@@ -6,9 +6,10 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\GeneriStoreRequest;
 use App\Http\Requests\v1\GeneriUpdateRequest;
-use App\Http\Resources\v1\collection\GeneriCollection;
+use App\Http\Resources\v1\GeneriCollection;
 use App\Http\Resources\v1\GeneriResource;
 use App\Models\generi;
+use App\Models\serieTv;
 use Illuminate\Support\Facades\Gate;
 
 class GeneriController extends Controller
@@ -20,7 +21,7 @@ class GeneriController extends Controller
     public function index(){
     if(Gate::allows('user')){
             // return response()->json(generi::all(),200);
-            return new GeneriCollection(generi::all('nome'));
+            return new GeneriCollection(generi::all());
         }
     }
 
@@ -28,16 +29,17 @@ class GeneriController extends Controller
      * 
      * 
      */
-    public function show(generi $genere){
-        $resource = new GeneriResource($genere);
+    public function show($id){
+        $resource = generi::where('idGenere',$id)
+        ->get('nome')
+        ->first();
         if($resource){
-            return response()->json($resource, 200);
+            return $resource;
         }else{
             return response()->json(['message' => 'Genere non trovato'], 404);
         }
 
     }
-
 
     /**
      * 
@@ -55,17 +57,18 @@ class GeneriController extends Controller
             }
         }
     }
-
-
-    /**
-     * 
-     * 
-     */
-    public function update(GeneriUpdateRequest $request, generi $genere){
+    /** 
+    * Update the specified resource in storage.     
+    * @param \Illuminate\Http\Request $request
+    * @param $idGenere ID del genere 
+    * @return JsonResource
+    */
+    public function update(GeneriUpdateRequest $request, $idGenere){
 
         if(Gate::allows('admin')){
             if(Gate::allows('attivo')){
                 $data = $request->validated();
+                $genere = generi::where('idGenere', $idGenere)->first();
                 $genere -> fill($data);
                 $genere->save();
                 $new = new GeneriResource($genere); 

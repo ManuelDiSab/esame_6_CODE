@@ -19,6 +19,8 @@ return new class extends Migration
             $table->tinyInteger('n_stagioni');
             $table->string('anno_inizio',4);
             $table->string('anno_fine',10)->nullable();
+            $table->string('path',100);
+            $table->string('voto',10);
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('idGenere')->references('idGenere')->on('generi');

@@ -21,6 +21,8 @@ class Indirizzo extends Model
         "indirizzo",
         "civico",
         "cap",
-        "località"
+        "località",
+        'provincia'
+
     ];
 }

@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Api\v1;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\TipologiaIndirizzoStoreRequest;
 use App\Http\Requests\v1\TipologiaIndirizzoUpdateRequest;
-use App\Http\Resources\v1\collection\TipologiaIndirizzoCollection;
+use App\Http\Resources\v1\TipologiaIndirizzoCollection;
 use App\Http\Resources\v1\TipologiaIndirizzoResource;
 use App\Models\TipologiaIndirizzi;
 use Illuminate\Support\Facades\Gate;

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('cod_fis',50)->nullable();
             $table->date('dataNascita');
             $table->unsignedTinyInteger('sesso')->unsigned();
+            $table->string('comuneNascita',50);
             $table->timestamps();
             $table->softDeletes();
 

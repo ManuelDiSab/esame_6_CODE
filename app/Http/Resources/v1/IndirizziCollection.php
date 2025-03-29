@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Resources\v1\collection;
+namespace App\Http\Resources\v1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class TipologiaIndirizzoCollection extends ResourceCollection
+class IndirizziCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
      *
-     * @return array<int|string, mixed>
+     * @return array\Illuminate\Contracts\Support\Arrayble\JsonSerializable
      */
-    public function toArray(Request $request): array
+    public function toArray(Request $request)
     {
         return parent::toArray($request);
     }

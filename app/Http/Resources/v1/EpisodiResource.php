@@ -14,20 +14,21 @@ class EpisodiResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // return parent::toArray($request);
-
         return $this->getCampi();
     }
 
-    protected function getCampi()
+    public function getCampi()
     {
         return [
             'idEpisodio' => $this->idEpisodio,
-            'idSerie,' => $this->idSerie,
+            'idSerie' => $this->idSerie,
             'titolo' => $this->titolo,
-            'durata,' => $this->durata,
+            'durata' => $this->durata,
             'numero' => $this->numero,
-            'stagione' => $this->stagione
+            'stagione' => $this->stagione,
+            'trama'=>$this->trama,
+            'voto'=> $this->voto,
+            'path'=>$this->path
         ];
     }
 }

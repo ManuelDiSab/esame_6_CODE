@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('durata',10);
             $table->integer('numero')->unsigned();
             $table->string('titolo',50);
+            $table->string('trama', 255)->nullable();
+            $table->string('voto',10);
+            $table->string('path',100);
             $table->tinyInteger('stagione');
             $table->softDeletes();
             $table->timestamps();

@@ -29,7 +29,8 @@ class User extends Authenticatable
         'password',
         'secretJWT',
         'salt',
-        'inizioSfida'
+        'inizioSfida',
+        'status'
         ];
 
     /**
@@ -88,8 +89,8 @@ class User extends Authenticatable
      * @param string $user
      * @return boolean
      */
-    public static function EsisteUtenteValidoPerIlLogin($utente){
-        $rit = DB::table('users')->where('status',1)->where('utente',$utente)->select('idUser')->get()->count();
+    public static function  EsisteUtenteValidoPerIlLogin($utente){
+        $rit = DB::table('users')->where('utente',$utente)->select('idUser')->get()->count();
         return $rit ? true:false;
     }
 }

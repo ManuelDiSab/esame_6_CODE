@@ -16,14 +16,18 @@ class FilmResource extends JsonResource
     {
         return $this->getCampi();
     }
-        public function getCampi(){
+        private function getCampi(){
         return [
             "idFilm"=>$this->idFilm,
             "idGenere"=>$this->idGenere,
             "titolo"=>$this->titolo,
             "regista"=>$this->regista,
             "durata"=>$this->durata,
-            "anno"=>$this->anno
+            "anno"=>$this->anno,
+            "path"=>$this->path_img,
+            "trama"=>$this->trama,
+            "voto"=>$this->voto,
+            "generi_secondari"=>$this->generi_secondari
         ];
     }
 }

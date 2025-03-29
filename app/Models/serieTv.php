@@ -20,8 +20,10 @@ class serieTv extends Model
         'idGenere',
         'titolo',
         'trama',
+        'path',
         'n_stagioni',
         'anno_inizio',
-        'anno_fine'
+        'anno_fine',
+        'voto'
     ];
 }

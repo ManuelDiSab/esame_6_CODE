@@ -23,6 +23,9 @@ class Film extends Model
         'regista',
         'durata',
         'anno',
+        'path_img',
+        'voto',
+        'generi_secondari'
     ];
 }
     

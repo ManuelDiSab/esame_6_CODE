@@ -18,6 +18,9 @@ class episodi extends Model
         'durata',
         'numero',
         'stagione',
-        'titolo'
+        'titolo',
+        'voto',
+        'path',
+        'trama'
     ];
 }

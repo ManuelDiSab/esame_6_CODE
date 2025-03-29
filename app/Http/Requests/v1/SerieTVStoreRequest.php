@@ -4,7 +4,7 @@ namespace App\Http\Requests\v1;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class EpisodiStoreRequest extends FormRequest
+class SerieTVStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -19,14 +19,17 @@ class EpisodiStoreRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            'idSerie' => 'required|integer',
+            'idGenere' => 'required|integer',
             'titolo' => 'required|string|max:45',
-            'durata' => 'string|max:255',
-            'numero' => 'required|integer',
-            'stagione' => 'required|integer'
+            'trama' => 'string|max:255',
+            'n_stagioni' => 'required|integer',
+            'anno_inizio' => 'required|string|max:4',
+            'anno_fine' => 'string|max:10',
+            'voto'=>'string|max:3|min:0',
+            'path'=>'required|string|min:2'
         ];
     }
 }

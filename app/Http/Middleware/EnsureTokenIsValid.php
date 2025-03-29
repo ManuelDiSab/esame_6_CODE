@@ -18,10 +18,13 @@ class EnsureTokenIsValid
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $token = $request->bearerToken();
+        $token = $request->bearerToken(); 
+        // $token = $_SERVER['PHP_AUTH_PW']; //--> Da un errore di tipo 500 sia su server che sul client 
+        // $token = $_SERVER['HTTP_AUTHORIZATION'];
+        // $token = trim(str_replace('Bearer','',$token)); //-->funziona sul lato server ma se provato ad usare in anuglar da un 500 internal server error
 
         $payload = AccessoController::verificaToken($token);
-        if($payload != null)
+        if($payload !== null)
         {
             $user = User::where('idUser',$payload->data->idUser)->first();
             if($user->status == 1){

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Helpers\AppHelpers;
 use App\Http\Controllers\Controller;
 use App\Models\Configurazioni;
 use Illuminate\Http\Request;
@@ -32,15 +33,15 @@ class ConfigurazioniController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Configurazioni $configurazioni)
+    public function show($id)
     {
         if(Gate::allows('attivo')){
             if(Gate::allows('user')){
-                $resource = new ($configurazioni);
+                $resource = Configurazioni::where('idConfig',$id)->FirstOrFail();
                 if($resource){
-                    return response()->json($resource, 200);
+                    return AppHelpers::rispostaCustom($resource, 'Configurazione trovata');
                 }else{
-                    return response()->json(['message' => 'Configurazione non trovata'], 404);
+                    return AppHelpers::rispostaCustom(null, 'Risorsa non trovata', 'errore 404');
                 }
             }
         }

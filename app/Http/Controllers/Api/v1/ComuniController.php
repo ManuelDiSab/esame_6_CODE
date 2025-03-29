@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Helpers\AppHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\ComuniStoreRequest;
 use App\Http\Requests\v1\ComuniUpdateRequest;
+use App\Http\Resources\v1\ComuniCollection;
 use App\Http\Resources\v1\ComuniResource;
 use App\Models\Comuni;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
@@ -17,14 +18,20 @@ class ComuniController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        if(Gate::allows('user')){
-            if(Gate::allows('attivo')){
-                return response()->json(Comuni::limit(100)->get(
-                ["nome","regione","cap","siglaAuto"]),200);
-            }
-        }
-       
+    {      
+        $nome = request('nome');
+                if($nome){
+                    $comuni = Comuni::where('nome','like',"{$nome}%")
+                    ->take(5)->get();
+                    return new ComuniCollection($comuni);
+                }else{
+                    $comuni = DB::table('comuni')
+                    ->orderBy('nome', 'asc')
+                    // ->limit(100)
+                    ->get();
+                    return new ComuniCollection($comuni);
+                    // return null;
+                }
     }
 
     /**
@@ -48,39 +55,36 @@ class ComuniController extends Controller
      */
     public function show($comune)
     {
-        if(Gate::allows('user')){
-            if(Gate::allows('attivo')){
-                $comune = Comuni::where('nome',$comune)
-                ->get()
-                ->first();
-
+                $comune = Comuni::where('nome','like', "%{$comune}%")
+                ->get(['idComune','nome','siglaAuto']);
                 if($comune) {
-                    return response()->json($comune, 200);
-                }else{
-                    return response()->json(['message' => 'Comune non trovato'], 404);
+                    return $comune;
+                }else if($comune == '' || $comune == null){
+                    return null;
                 }
-            }
-        }
     }
 
     /**
-     * Funzione oer ritornare l'elenco delle province
-     * 
-     *
-     * 
+     * Funzione oer ritornare l'elenco delle province senza ripetizioni
      */
-    public function provinceCollection(){
-        if(Gate::allows('user')){
-            if(Gate::allows('attivo')){
-                $province = DB::table('comuni')->distinct()->get('provincia');
-                return response()->json($province,200);
-            }
-        }
+    public function showProvincia($comune){
+                $province = DB::table('comuni')->where('nome', $comune)->get('siglaAuto');
+                return $province;
+    }
+
+    /**
+     * Funzione oer ritornare l'elenco delle province senza ripetizioni
+     */
+    public function siglaAutoCollection(){
+
+                $province = DB::table('comuni')->orderBy('siglaAuto','asc')->distinct()->get('siglaAuto');
+                return AppHelpers::rispostaCustom($province);
     }
 
 
     /**
      * Update the specified resource in storage.
+     * 
      */
     public function update(ComuniUpdateRequest $request,Comuni $comune)
     {

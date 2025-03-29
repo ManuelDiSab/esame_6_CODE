@@ -18,6 +18,7 @@ class Anagrafica_utenti extends Model
         'idNazione',
         'cod_fis',
         'dataNascita',
-        'sesso'
+        'sesso',
+        'comuneNascita'
     ];
 }

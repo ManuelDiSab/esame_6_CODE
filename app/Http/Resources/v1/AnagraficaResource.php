@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\v1\resource;
+namespace App\Http\Resources\v1;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -19,11 +19,11 @@ class AnagraficaResource extends JsonResource
 
     protected function getCampi(){
         return [
-            'idUser'=>$this->idUser,
-            'cod_fis'=>$this->cod_fis,
-            'dataNascita'=>$this->dataNascita,
-            'sesso'=>$this->sesso 
-        ];
+            'cod_fis' => $this->cod_fis,
+            'dataNascita'=> $this->dataNascita,
+            'sesso'=>$this->sesso,
+            'idUser'=>$this->idUser
+            ];
     }
 
 }

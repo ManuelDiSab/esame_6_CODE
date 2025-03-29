@@ -4,8 +4,7 @@ namespace App\Http\Requests\v1;
 
 use App\Helpers\AppHelpers;
 
-
-class FilmUpdateRequest extends FilmStoreRequest
+class UserUpdateRequest extends UserStoreRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,4 +24,5 @@ class FilmUpdateRequest extends FilmStoreRequest
         $rules = parent::rules();
         return AppHelpers::AggiornaRegoleHelper($rules);
     }
-}   
+
+}

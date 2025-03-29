@@ -97,8 +97,9 @@ class AppHelpers{
         $nbf = ($usaDa == null) ? $t:$usaDa;
         $exp = ($scadenza == null) ? $nbf + $maxTime : $scadenza;
         $idRuolo = $recordContatto->idRuolo; //prendo l'id ruolo dell'utente
-        $anagraficaContatto = Anagrafica_utenti::where('idUser',$idUser);
-        $nazione = Nazione::where('idNazione',$anagraficaContatto->idNazione)->first();
+        $anagraficaContatto = Anagrafica_utenti::where('idUser',$idUser)->first();
+        $nazione_completa = Nazione::where('idNazione',$anagraficaContatto->idNazione)->get('nome')->first();
+        $nazione = $nazione_completa['nome'];
         $arr = array( //creo un array e ci inserisco i dati utili del token
             'iss'=>'',
             'aud'=>null,
@@ -109,10 +110,9 @@ class AppHelpers{
                 'idUser'=>$idUser,
                 'status'=>$recordContatto->status, //Status attivo o non attivo (bannato, sospeso)
                 'idRuolo'=>$idRuolo,
-                'nome_status'=>trim($recordContatto->nome . " " . $recordContatto->cognome),
+                'nome'=>trim($recordContatto->nome . " " . $recordContatto->cognome),
                 'sesso'=>$anagraficaContatto->sesso,
                 'nazione'=>$nazione
-
             )
             );
             $token = JWT::encode($arr, $secretJWT,'HS256');
