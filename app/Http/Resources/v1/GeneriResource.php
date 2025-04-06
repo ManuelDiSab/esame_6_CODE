@@ -12,8 +12,11 @@ class GeneriResource extends JsonResource
      *
      * @return array<string, mixed>
      */
-    public function toArray(Request $request): array
+    public function toArray(Request $request)
     {
+        return $this->getCampi();
+    }
+    private function getCampi(){
         return [
             'idGenere'=> $this->idGenere,
             'nome'=> $this->nome,

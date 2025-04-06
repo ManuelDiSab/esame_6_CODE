@@ -31,10 +31,10 @@ class GeneriController extends Controller
      */
     public function show($id){
         $resource = generi::where('idGenere',$id)
-        ->get('nome')
+        ->get()
         ->first();
         if($resource){
-            return $resource;
+            return new GeneriResource($resource);
         }else{
             return response()->json(['message' => 'Genere non trovato'], 404);
         }
@@ -72,7 +72,6 @@ class GeneriController extends Controller
                 $genere -> fill($data);
                 $genere->save();
                 $new = new GeneriResource($genere); 
- 
                 return response()->json(["risorsa" => $new], 200);      
             }
         }

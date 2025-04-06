@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\v1\AnagraficaUtentiController;
 use App\Http\Controllers\Api\v1\ConfigurazioniController;
 use App\Http\Controllers\Api\v1\AccessoController;
 use App\Http\Controllers\Api\v1\ComuniController;
+use App\Http\Controllers\Api\v1\ContattiRecapitiController;
 use App\Http\Controllers\Api\v1\UserController;
 use App\Http\Controllers\api\v1\episodiController;
 use App\Http\Controllers\Api\v1\FilmController;
@@ -23,6 +24,7 @@ if (!defined("_VERS")) {
 //Route accessibili da chiunque non abbia un account 
 
 //Route per i comuni e le nazioni
+Route::get(_VERS . '/prova/{idFilm}', [FilmController::class, 'check']);//PEr prova e poi da cancellare
 Route::get(_VERS . '/comuni', [ComuniController::class, 'index']);
 Route::get(_VERS . '/comune/{comune}', [ComuniController::class, 'show']);
 Route::get(_VERS . '/provincia/{comune}', [ComuniController::class, 'showProvincia']);
@@ -43,7 +45,7 @@ Route::middleware([EnsureTokenIsValid::class])->group(function () {
     Route::get(_VERS . '/lista-utenti', [UserController::class, 'indexAdmin']);
     Route::get(_VERS . '/lista-utenti/{idUser}', [UserController::class, 'showAdmin']);
     Route::put(_VERS . '/lista-utenti/{idUser}', [UserController::class, 'updateStatus']);
-    // Route::delete(_VERS . '/lista-utenti/{idUser}', [UserController::class, 'destroyAdmin']); Non so se metterlo
+    Route::delete(_VERS . '/elimina-utente/{idUser}', [UserController::class, 'destroyAdmin']);
 
     //Route per la gestione delle configurzioni
     Route::get(_VERS . '/configurazioni', [ConfigurazioniController::class, 'index']);
@@ -71,8 +73,10 @@ Route::middleware([EnsureTokenIsValid::class])->group(function () {
 
     //Route per la gestione dei film
     Route::post(_VERS . '/film', [FilmController::class, 'store']);
+    // Route::put(_VERS . '/film/{idFilm}', [FilmController::class, 'uploadImage']);
     Route::put(_VERS . '/film/{film}', [FilmController::class, 'update']);
     Route::delete(_VERS . '/film/{idFilm}', [FilmController::class, 'destroy']);
+    Route::post(_VERS . '/locandina/film/{idFilm}', [FilmController::class, 'UpdateImage']);
 
     //Route per la gestione delle serie
     Route::post(_VERS . '/serie', [serieTvController::class, 'store']);
@@ -94,6 +98,9 @@ Route::middleware([EnsureTokenIsValid::class])->group(function () {
     Route::get(_VERS . '/user', [UserController::class, 'show']);
     Route::get(_VERS . '/dati-utente', [AnagraficaUtentiController::class, 'index']);
     Route::put(_VERS . '/dati-utente', [AnagraficaUtentiController::class, 'update']);
+    Route::get(_VERS . '/indirizzo-user', [IndirizziController::class, 'showIndirizzoUser']);
+    Route::get(_VERS . '/recapiti-utente', [ContattiRecapitiController::class, 'show']);
+    Route::put(_VERS . '/recapiti/{id}', [ContattiRecapitiController::class,'update']);
 
     //Api per indirizzi e tipologia indirizzi
     Route::get(_VERS . '/tipo-indirizzo', [TipologiaIndirizziController::class, 'index']);

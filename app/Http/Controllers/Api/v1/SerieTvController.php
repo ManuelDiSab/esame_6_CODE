@@ -9,6 +9,7 @@ use App\Http\Resources\v1\SerieTvCollection;
 use App\Http\Resources\v1\SerieTvResource;
 use App\Models\serieTv;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 
 class serieTvController extends Controller
 {
@@ -36,18 +37,17 @@ class serieTvController extends Controller
     {
         if(Gate::allows('attivo')){
             if(Gate::allows('user')){
-                $resource = serieTv::where('titolo',$serie)
+                $resource = serieTv::where('idSerie',$serie)
                 ->get()
                 ->first();
                 if($resource){
-                    return response()->json($resource, 200);
+                    return new SerieTvResource($resource);  
                 }else{
                     return response()->json(['message' => 'SerieTv non trovata'], 404);
                 }
             }
         }
     }
-
     public function seriePerGenere($genere){
         $resource = serieTv::where('idGenere',$genere)->get();
         if($resource){
@@ -88,8 +88,11 @@ class serieTvController extends Controller
         if(Gate::allows('attivo')){
             if(Gate::allows('admin')){
                 $data = $request->validated();
+                $img = $request->file('path_img');
+                $filename = time().'.'.$img->extension();
+                $path = $request->file('path_img')->storeAs('img/',$filename,'public');
+                $data['path_img'] = asset('storage/img/'.$filename);
                 $resource = SerieTV::create($data);
-
                 $new =  new SerieTvResource($resource);
                 return response()->json(["nuova risorsa"=> $new],201);
             }
@@ -114,6 +117,19 @@ class serieTvController extends Controller
                 return response()->json(["risorsa" => $new], 200);  
             }
         }
+    }
+
+
+    public function UpdateImage($idFilm,SerieTVUpdateRequest $request){
+        $film = serieTv::where('idFilm',$idFilm)->first();
+        if($film->path_img){
+            Storage::delete('public/img/'.$film->path_img);
+        }
+        $img = $request->file('path_img');
+        $filename =time().'.'.$img->extension();
+        $path = $request->file('path_img')->storeAs('img/',$filename,'public');    
+        $film['path_img'] = "http://127.0.0.1:8000/storage/img/".$filename;
+        $film->save();
     }
 
     /**

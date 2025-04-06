@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Helpers\AppHelpers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\indirizzoStoreRequest;
 use App\Http\Requests\v1\indirizzoUpdateRequest;
 use App\Http\Resources\v1\indirizziCollection;
 use App\Http\Resources\v1\indirizziResource;
+use App\Models\comuni;
 use App\Models\Indirizzo;
+use App\Models\Nazione;
+use App\Models\TipologiaIndirizzi;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
@@ -37,6 +41,26 @@ class IndirizziController extends Controller
                 $indirizzo = Indirizzo::where('idIndirizzo',$idIndirizzo)->first();
                 $resource = new indirizziResource($indirizzo);
                 return $resource;
+            }
+        }
+    }
+
+    public function showIndirizzoUser(){
+        if(Gate::allows('admin')){
+            if(Gate::allows('attivo')){
+                $user = Auth::user();
+                $id= $user->idUser;
+                $indirizzo = Indirizzo::where('idUser',$id)->first();
+                $idComune = $indirizzo->idComune;
+                $idNazione = $indirizzo->idNazione;
+                $idTipologiaIndirizzo = $indirizzo->idTipologiaIndirizzo;
+
+                $comune = comuni::where('idComune',$idComune)->first('nome');
+                $nazione = Nazione::where('idNazione',$idNazione)->first('nome');
+                $tipo = TipologiaIndirizzi::where('idTipologiaIndirizzo',$idTipologiaIndirizzo)->first('nome');
+                $resource = new indirizziResource($indirizzo);
+                // return new indirizziResource($indirizzo) && $comune && $nazione && $tipo;
+                return AppHelpers::rispostaCustom([$tipo,$nazione, $comune, $resource ]);
             }
         }
     }

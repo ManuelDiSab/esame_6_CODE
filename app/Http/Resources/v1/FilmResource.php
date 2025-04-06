@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\v1;
 
+use App\Models\generi;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -20,6 +21,7 @@ class FilmResource extends JsonResource
         return [
             "idFilm"=>$this->idFilm,
             "idGenere"=>$this->idGenere,
+            "genere"=>generi::where('idGenere',$this->idGenere)->valueOrFail('nome'),
             "titolo"=>$this->titolo,
             "regista"=>$this->regista,
             "durata"=>$this->durata,

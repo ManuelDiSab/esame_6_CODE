@@ -22,11 +22,11 @@ class AnagraficaUtentiStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'idNazione'=>'required | integer',
-            'cod_fis'=>'required | string | min:16| max:16' ,
-            'dataNascita'=>'required | date ',
-            'sesso'=>'required | integer',
-            'comuneNascita'=>'required | string'
+            'idNazione'=>'required|integer',
+            'cod_fis'=>'required|string|min:16|max:16' ,
+            'dataNascita'=>'required!date',
+            'sesso'=>'required|integer',
+            'comuneNascita'=>'required|string'
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\v1;
 
+use App\Models\generi;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -17,6 +18,7 @@ class SerieTvResource extends JsonResource
         return [
             'idSerie'=>$this->idSerie,
             'idGenere'=>$this->idGenere,
+            "genere"=>generi::where('idGenere',$this->idGenere)->valueOrFail('nome'),//Prendo solo il valore della colonna 
             'titolo' => $this->titolo,
             'trama' => $this->trama,
             'n_stagioni' => $this->n_stagioni,

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Helpers\AppHelpers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\UserUpdateRequest;
@@ -14,12 +15,7 @@ use App\Models\Indirizzo;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\Unique;
 
-use function Termwind\parse;
 
 class UserController extends Controller
 {
@@ -78,8 +74,10 @@ class UserController extends Controller
      */
     public function show()
     {
-        return response()->json(Auth::user());
+        $user = Auth::user();
+        return AppHelpers::rispostaCustom($user);
     }
+
     /**
      * 
      * 
@@ -162,7 +160,7 @@ class UserController extends Controller
      * 
      * 
      */
-    public function destroyAdmin(Request $request, $idUser)
+    public function destroyAdmin( $idUser)
     {
         if (Gate::allows('user')) {
             if (Gate::allows('attivo')) {

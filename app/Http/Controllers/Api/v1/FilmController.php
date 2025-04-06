@@ -9,9 +9,11 @@ use App\Http\Resources\v1\FilmCollection;
 use App\Http\Resources\v1\FilmResource;
 use App\Models\Film;
 use App\Models\generi;
+use Illuminate\Contracts\Cache\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 
 class FilmController extends Controller
 {
@@ -33,7 +35,7 @@ class FilmController extends Controller
                     ->get();
                     return new FilmCollection($film);
                 }else{
-                    $film  = Film::all();
+                    $film  = Film::all()->take(10);
                    return new FilmCollection($film); 
                 }
             }
@@ -102,16 +104,18 @@ class FilmController extends Controller
     public function store(FilmStoreRequest $request){
         if(Gate::allows('attivo')){
             if(Gate::allows('admin')){
-
                 $data = $request->validated();
+                $img = $request->file('path_img');
+                $filename = time().'.'.$img->extension();
+                $path = $request->file('path_img')->storeAs('img/',$filename,'public');
+                $data['path_img'] = asset('storage/img/'.$filename);
                 $resource = Film::create($data);
                 $new =  new FilmResource($resource);
-                $img = $new->path_img;
-                move_uploaded_file($img,'C:\Users\manue\Desktop\NUOVO ESAME\Esame-6-angular\src\assets\film_cover');
                 return response()->json(["nuova risorsa"=> $new],201);
             }
         }
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -132,6 +136,18 @@ class FilmController extends Controller
         }
     }
 
+    public function UpdateImage($idFilm,FilmUpdateRequest $request){
+        $film = Film::where('idFilm',$idFilm)->first();
+        if($film->path_img){
+            Storage::delete('public/img/'.$film->path_img); 
+        }
+        $img = $request->file('path_img');
+        $filename =time().'.'.$img->extension();
+        $path = $request->file('path_img')->storeAs('img/',$filename,'public');    
+        $film['path_img'] = "http://localhost/ESAMI/ESAME%20SESSIONE%206%20ACCADEMIA%20CODE%20DI%20SABATINO%20MANUEL/esame_6_CODE/public/storage/img/".$filename;
+        $film->save();
+    }
+    
     /**
      * Elimina una risorsa
      * 
@@ -155,6 +171,12 @@ class FilmController extends Controller
      * 
      * 
      */
+    public function check(Request $request, $idFilm){
+        $film = Film::where('idFilm',$idFilm)->first();
+        $img = $film->path_img;
+        // Storage::delete('public/img'.$img);
+        return asset('storage/img/'.$img);
+    }
     
 
 }

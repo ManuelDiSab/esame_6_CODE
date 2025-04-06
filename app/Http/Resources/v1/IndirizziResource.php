@@ -12,8 +12,12 @@ class indirizziResource extends JsonResource
      *
      * @return array<string, mixed>
      */
-    public function toArray(Request $request): array
+    public function toArray(Request $request)
     {
+        return $this->getCampi();
+    }
+
+    private function getCampi(){
         return [
             "idUser"=>$this->idUser,
             "idTipologiaIndirizzo"=>$this->idTipologiaIndirizzo,
@@ -22,7 +26,7 @@ class indirizziResource extends JsonResource
             "indirizzo"=>$this->indirizzo,
             "civico"=>$this->civico,
             "cap"=>$this->cap,
-            "località"=>$this->località
+            "provincia"=>$this->provincia
         ];
     }
 }

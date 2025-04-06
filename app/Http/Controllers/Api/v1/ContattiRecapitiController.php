@@ -1,9 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\v1;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\v1\RecapitiUpdateRequest;
+use App\Http\Resources\v1\RecapitiResource;
 use App\Models\contatti_recapiti;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class ContattiRecapitiController extends Controller
@@ -31,16 +35,14 @@ class ContattiRecapitiController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(contatti_recapiti $contatti_recapiti)
+    public function show()
     {
         if(Gate::allows('attivo')){
             if(Gate::allows('user')){
-                $resource = new ($contatti_recapiti);
-                if($resource){
-                    return response()->json($resource, 200);
-                }else{
-                    return response()->json(['message' => 'Recapito non trovato'], 404);
-                }
+                $user = Auth::user();
+                $id = $user->idUser;
+                $recapito = contatti_recapiti::where('idUser',$id)->first();
+                return new RecapitiResource($recapito);
             }
         }
     }
@@ -48,9 +50,18 @@ class ContattiRecapitiController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, contatti_recapiti $contatti_recapiti)
+    public function update(RecapitiUpdateRequest $request, $id)
     {
-        //
+        if(gate::allows('user')){
+            if(Gate::allows('attivo')){
+                $data = $request->validated();
+                $resource = contatti_recapiti::where('idUser',$id)->first();
+                $resource->fill($data);
+                $resource->save();
+                $new =  new RecapitiResource($resource);
+                return response()->json(["nuova risorsa"=> $new],201);
+            }
+        }
     }
 
     /**
