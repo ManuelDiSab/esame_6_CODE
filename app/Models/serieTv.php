@@ -22,7 +22,7 @@ class serieTv extends Model
         'trama',
         'path',
         'n_stagioni',
-        'anno_inizio',
+        'anno',
         'anno_fine',
         'voto'
     ];

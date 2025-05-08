@@ -20,7 +20,8 @@ class episodi extends Model
         'stagione',
         'titolo',
         'voto',
-        'path',
+        'path_img',
+        'path_video',
         'trama'
     ];
 }

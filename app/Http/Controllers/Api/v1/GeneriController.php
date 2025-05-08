@@ -50,9 +50,8 @@ class GeneriController extends Controller
             if(Gate::allows('attivo')){
                 $data = $request->validated();
                 $resource = generi::create($data);
-
-                $new =  new GeneriResource($resource);
-                return response()->json(["nuova risorsa"=> $new],201);
+                $generi = generi::all();
+                return new GeneriCollection($generi); 
             
             }
         }
@@ -71,8 +70,8 @@ class GeneriController extends Controller
                 $genere = generi::where('idGenere', $idGenere)->first();
                 $genere -> fill($data);
                 $genere->save();
-                $new = new GeneriResource($genere); 
-                return response()->json(["risorsa" => $new], 200);      
+                $generi = generi::all();
+                return new GeneriCollection($generi);    
             }
         }
     }
@@ -86,7 +85,8 @@ class GeneriController extends Controller
         $genere = generi::find($idGenere);
         if($genere){
             $genere->delete();
-            return response()->json(["message"=> 'genere cancellato correttamente'],200);
+            $generi = generi::all();
+            return new GeneriCollection($generi);    
         }else{
             return response()->json(['message' => 'Genere non trovato'], 404);
         }

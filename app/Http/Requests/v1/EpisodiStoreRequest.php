@@ -29,7 +29,8 @@ class EpisodiStoreRequest extends FormRequest
             'stagione' => 'required|integer',
             'voto' => 'string|max:3|min:0',
             'trama'=>'string|max:500',
-            'path' => 'required|string|min:2'
+            'path_img' => 'required|image|mimes:jpeg,pbg,jpg,wepb|max:4048',
+            'path_video' => 'required|mimes:mp4,m4v,mov,avi,mkv'
         ];
     }
 }

@@ -18,6 +18,8 @@ class FilmResource extends JsonResource
         return $this->getCampi();
     }
         private function getCampi(){
+            $locale = "http://localhost/ESAMI/ESAME%20SESSIONE%206%20ACCADEMIA%20CODE%20DI%20SABATINO%20MANUEL/esame_6_CODE/public/storage/img/";
+            $server = 'http://127.0.0.1:8000/storage/img/';
         return [
             "idFilm"=>$this->idFilm,
             "idGenere"=>$this->idGenere,
@@ -26,7 +28,7 @@ class FilmResource extends JsonResource
             "regista"=>$this->regista,
             "durata"=>$this->durata,
             "anno"=>$this->anno,
-            "path"=>$this->path_img,
+            "path"=>$locale.$this->path_img,
             "trama"=>$this->trama,
             "voto"=>$this->voto,
             "generi_secondari"=>$this->generi_secondari

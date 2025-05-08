@@ -45,6 +45,7 @@ Route::middleware([EnsureTokenIsValid::class])->group(function () {
     Route::get(_VERS . '/lista-utenti', [UserController::class, 'indexAdmin']);
     Route::get(_VERS . '/lista-utenti/{idUser}', [UserController::class, 'showAdmin']);
     Route::put(_VERS . '/lista-utenti/{idUser}', [UserController::class, 'updateStatus']);
+    Route::get(_VERS . '/lista-utenti/ricerca/{ricerca}', [UserController::class, 'ricercaUtente']);
     Route::delete(_VERS . '/elimina-utente/{idUser}', [UserController::class, 'destroyAdmin']);
 
     //Route per la gestione delle configurzioni
@@ -73,7 +74,6 @@ Route::middleware([EnsureTokenIsValid::class])->group(function () {
 
     //Route per la gestione dei film
     Route::post(_VERS . '/film', [FilmController::class, 'store']);
-    // Route::put(_VERS . '/film/{idFilm}', [FilmController::class, 'uploadImage']);
     Route::put(_VERS . '/film/{film}', [FilmController::class, 'update']);
     Route::delete(_VERS . '/film/{idFilm}', [FilmController::class, 'destroy']);
     Route::post(_VERS . '/locandina/film/{idFilm}', [FilmController::class, 'UpdateImage']);
@@ -85,6 +85,11 @@ Route::middleware([EnsureTokenIsValid::class])->group(function () {
     Route::post(_VERS . '/serie/episodi', [episodiController::class, 'store']);
     Route::put(_VERS . '/serie/episodi/{episodio}', [episodiController::class, 'update']);
     Route::delete(_VERS . '/serie/episodi/{idEpisodio}', [episodiController::class, 'destroy']);
+    Route::post(_VERS . '/locandina/serie/{idSerie}', [serieTvController::class, 'UpdateImage']);
+    Route::post(_VERS . '/locandina/episodi/{idEpisodio}', [episodiController::class, 'UpdateImage']);
+    Route::post(_VERS . '/video/episodi/{idEpisodio}',[ episodiController::class, 'UpdateVideo']);
+    Route::post(_VERS . '/video/film/{idEpisodio}',[ FilmController::class, 'UpdateVideo']);
+
 
 
 

@@ -24,12 +24,12 @@ class SerieTVStoreRequest extends FormRequest
         return [
             'idGenere' => 'required|integer',
             'titolo' => 'required|string|max:45',
-            'trama' => 'string|max:255',
+            'trama' => 'string|max:500',
             'n_stagioni' => 'required|integer',
-            'anno_inizio' => 'required|string|max:4',
+            'anno' => 'required|string|max:4',
             'anno_fine' => 'string|max:10',
             'voto'=>'string|max:3|min:0',
-            'path'=>'required|string|min:2'
+            'path'=>'required|image|mimes:jpeg,pbg,jpg,webp|max:4048'  
         ];
     }
 }

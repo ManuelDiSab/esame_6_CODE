@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\api\v1;
 
+use App\Helpers\AppHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\SerieTVStoreRequest;
 use App\Http\Requests\v1\SerieTVUpdateRequest;
@@ -88,10 +89,10 @@ class serieTvController extends Controller
         if(Gate::allows('attivo')){
             if(Gate::allows('admin')){
                 $data = $request->validated();
-                $img = $request->file('path_img');
+                $img = $request->file('path');
                 $filename = time().'.'.$img->extension();
-                $path = $request->file('path_img')->storeAs('img/',$filename,'public');
-                $data['path_img'] = asset('storage/img/'.$filename);
+                $path = $request->file('path')->storeAs('img/',$filename,'public');
+                $data['path'] = $filename;
                 $resource = SerieTV::create($data);
                 $new =  new SerieTvResource($resource);
                 return response()->json(["nuova risorsa"=> $new],201);
@@ -112,24 +113,31 @@ class serieTvController extends Controller
                 $data = $request->validated();
                 $serie -> fill($data);
                 $serie->save();
-                $new = new SerieTvResource($serie); 
- 
-                return response()->json(["risorsa" => $new], 200);  
+                return new SerieTvResource($serie); 
             }
         }
     }
 
-
-    public function UpdateImage($idFilm,SerieTVUpdateRequest $request){
-        $film = serieTv::where('idFilm',$idFilm)->first();
-        if($film->path_img){
-            Storage::delete('public/img/'.$film->path_img);
+    /**
+     * Funzione per fare un update dell'immagine
+     * @param App\Http\Requests\v1\SerieTVUpdateRequest $request
+     * @param $idSerie ID della serie
+     * @return Array
+     */
+    public function UpdateImage($idSerie,SerieTVUpdateRequest $request){
+        $serie = serieTv::where('idSerie',$idSerie)->first();
+        if($request->file('path')){
+            if($serie->path){
+                $path_img= $serie->path;
+                unlink(storage_path('app/public/img/'.$path_img));
+            }
         }
-        $img = $request->file('path_img');
+        $img = $request->file('path');
         $filename =time().'.'.$img->extension();
-        $path = $request->file('path_img')->storeAs('img/',$filename,'public');    
-        $film['path_img'] = "http://127.0.0.1:8000/storage/img/".$filename;
-        $film->save();
+        $path = $request->file('path')->storeAs('img/',$filename,'public');    
+        $serie['path'] = $filename;
+        $serie->save();
+        return new SerieTvResource($serie);
     }
 
     /**

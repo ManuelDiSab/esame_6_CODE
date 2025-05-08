@@ -25,7 +25,7 @@ class IndirizziController extends Controller
      */
     public function index()
     {
-        if(Gate::allows('utente')){
+        if(Gate::allows('user')){
             if(Gate::allows('attivo'))
             {   
                 $user = Auth::user();
@@ -46,7 +46,7 @@ class IndirizziController extends Controller
     }
 
     public function showIndirizzoUser(){
-        if(Gate::allows('admin')){
+        if(Gate::allows('user')){
             if(Gate::allows('attivo')){
                 $user = Auth::user();
                 $id= $user->idUser;
@@ -102,8 +102,6 @@ class IndirizziController extends Controller
                 }                
             }
         }
-    
-
 
     /**
      * 

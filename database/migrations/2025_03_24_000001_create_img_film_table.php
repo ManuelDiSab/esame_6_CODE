@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('path',150);
             $table->softDeletes();
             $table->timestamps();
+            
             $table->foreign('idFilm')->references('idFilm')->on('film');
 
         });

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Helpers\AppHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\FilmStoreRequest;
 use App\Http\Requests\v1\FilmUpdateRequest;
@@ -108,7 +109,7 @@ class FilmController extends Controller
                 $img = $request->file('path_img');
                 $filename = time().'.'.$img->extension();
                 $path = $request->file('path_img')->storeAs('img/',$filename,'public');
-                $data['path_img'] = asset('storage/img/'.$filename);
+                $data['path_img'] = $filename;
                 $resource = Film::create($data);
                 $new =  new FilmResource($resource);
                 return response()->json(["nuova risorsa"=> $new],201);
@@ -124,28 +125,54 @@ class FilmController extends Controller
      * @param $idFilm 
      * @return JsonResource
      */
-    public function update(FilmUpdateRequest $request, Film $film){
+    public function update(FilmUpdateRequest $request,Film $film){
         if(Gate::allows('attivo')){
             if(Gate::allows('admin')){
                 $data = $request->validated();
                 $film -> fill($data);
                 $film->save();
-                $new = new FilmResource($film); 
-                return response()->json(["risorsa" => $new], 200);      
+                return new FilmResource($film); 
             }
         }
     }
 
+    
     public function UpdateImage($idFilm,FilmUpdateRequest $request){
         $film = Film::where('idFilm',$idFilm)->first();
-        if($film->path_img){
-            Storage::delete('public/img/'.$film->path_img); 
-        }
         $img = $request->file('path_img');
-        $filename =time().'.'.$img->extension();
-        $path = $request->file('path_img')->storeAs('img/',$filename,'public');    
-        $film['path_img'] = "http://localhost/ESAMI/ESAME%20SESSIONE%206%20ACCADEMIA%20CODE%20DI%20SABATINO%20MANUEL/esame_6_CODE/public/storage/img/".$filename;
+        if($img){
+            if($film->path_img){
+                $path_img= $film->path_img;
+                unlink(storage_path('app/public/img/'.$path_img));
+            }
+            $filename =time().'.'.$img->extension();
+            $path = $request->file('path_img')->storeAs('img/',$filename,'public');    
+            $film['path_img'] = $filename;
+            $film->save();
+            $ritorno = new FilmResource($film);
+        }
+        return $ritorno;
+    }
+
+    /**
+     * Funzione per fare l'update del video del film
+     */
+    public function UpdateVideo($idFilm, FilmUpdateRequest $request){
+        $film = Film::where('idFilm',$idFilm)->first();
+        $video_request = $request->file('path_video');
+        if($video_request){
+            if($film->path_video){
+                $path_video= $film->path_video;
+                unlink(storage_path('app/public/video/'.$path_video));
+            }
+        }
+        $video = $request->file('path_video');
+        $filename_video = time().'.'.$video->extension();
+        $path = $request->file('path_video')->storeAs('videoEp/',$filename_video,'public');  
+        $film['path_video'] = $filename_video;
         $film->save();
+        $ritorno = new FilmResource($film);
+        return $ritorno->path_video;
     }
     
     /**
@@ -159,7 +186,6 @@ class FilmController extends Controller
             if(Gate::allows('admin')){
                 $film = Film::findOrFail($idFilm);
                 $film->delete();
-
                 return response()->json("Film eliminato",204);
             }
         }

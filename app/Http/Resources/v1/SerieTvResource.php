@@ -15,6 +15,8 @@ class SerieTvResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $locale = "http://localhost/ESAMI/ESAME%20SESSIONE%206%20ACCADEMIA%20CODE%20DI%20SABATINO%20MANUEL/esame_6_CODE/public/storage/img/";
+        $server = 'http://127.0.0.1:8000/storage/img/';
         return [
             'idSerie'=>$this->idSerie,
             'idGenere'=>$this->idGenere,
@@ -22,9 +24,9 @@ class SerieTvResource extends JsonResource
             'titolo' => $this->titolo,
             'trama' => $this->trama,
             'n_stagioni' => $this->n_stagioni,
-            'anno_inizio' => $this->anno_inizio,
+            'anno' => $this->anno,
             'anno_fine' => $this->anno_fine,
-            'path'=>$this->path,
+            'path'=>$locale.$this->path,
             'voto'=>$this->voto
         ];
     }

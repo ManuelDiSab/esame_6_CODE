@@ -19,6 +19,10 @@ class EpisodiResource extends JsonResource
 
     public function getCampi()
     {
+        $locale = "http://localhost/ESAMI/ESAME%20SESSIONE%206%20ACCADEMIA%20CODE%20DI%20SABATINO%20MANUEL/esame_6_CODE/public/storage/imgEpisodi/";
+        $locale_video = "http://localhost/ESAMI/ESAME%20SESSIONE%206%20ACCADEMIA%20CODE%20DI%20SABATINO%20MANUEL/esame_6_CODE/public/storage/videoEp/";
+        $server = 'http://127.0.0.1:8000/storage/imgEpisodi/';
+        $server = 'http://127.0.0.1:8000/storage/videoEp/';        
         return [
             'idEpisodio' => $this->idEpisodio,
             'idSerie' => $this->idSerie,
@@ -28,7 +32,8 @@ class EpisodiResource extends JsonResource
             'stagione' => $this->stagione,
             'trama'=>$this->trama,
             'voto'=> $this->voto,
-            'path'=>$this->path
+            'path_img'=>$locale.$this->path_img,
+            'path_video'=>$locale_video.$this->path_video
         ];
     }
 }

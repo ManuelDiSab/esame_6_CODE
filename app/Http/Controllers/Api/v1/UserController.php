@@ -28,18 +28,20 @@ class UserController extends Controller
     {
         if (Gate::allows('admin')) {
             if (Gate::allows('attivo')) {
-                $request= request('status');
-                if($request == 'attivi'){
+                $status = request('status'); //Query per lo status
+
+                if ($status == 'attivi') {
                     $collection = User::all()->where('status', 1);
                     return new UserCollection($collection);
-                }
-                else if($request === 'inattivi'){
-                    $collection = User::where('status',0)->get();
-                    return new UserCollection($collection);
-                }else if(!$request){
-                    $collection =  User::all();
+                } else if ($status === 'inattivi') {
+                    $collection = User::where('status', 0)->get();
                     return new UserCollection($collection);
                 }
+                // else if(!$status){
+
+                $collection =  User::all()->take(10);
+                return new UserCollection($collection);
+                // }
 
             } else {
                 abort(403, "Il tuo account è disabilitato");
@@ -57,7 +59,7 @@ class UserController extends Controller
                 $data = new UserResource($user);
                 if ($data) {
                     return $data;
-                }else{
+                } else {
                     return ["message" => "L'utente non esiste"];
                 }
             } else {
@@ -80,6 +82,23 @@ class UserController extends Controller
 
     /**
      * 
+     */
+    public function ricercaUtente($ricerca)
+    {
+        if (Gate::allows('attivo')) {
+            if (Gate::allows('admin')) {
+                $utenti = User::where('nome', 'like', "{$ricerca}%")->orWhere('cognome', 'like', "{$ricerca}%")->get();
+                return new UserCollection($utenti);
+            } else {
+                abort(403, "Ops! Non sei autorizzato!");
+            }
+        } else {
+            abort(403, "Il tuo account non è attivo");
+        }
+    }
+
+    /**
+     * 
      * 
      * 
      */
@@ -89,7 +108,7 @@ class UserController extends Controller
         if (Gate::allows('user')) {
             if (Gate::allows('attivo')) {
                 $user = Auth::user();
-                $id= $user->idUser;
+                $id = $user->idUser;
                 $data = $request->validated();
                 $validato = User::findOrFail($id)->fill($data);
                 $validato->save();
@@ -99,26 +118,26 @@ class UserController extends Controller
                     'utente' => $new
                 ];
             }
-            }
         }
-    
+    }
+
 
     /**
      * 
      * 
      * 
      */
-    public function updateStatus(UserUpdateRequest $request,$idUser)
+    public function updateStatus(UserUpdateRequest $request, $idUser)
     {
         if (Gate::allows('admin')) {
             if (Gate::allows('attivo')) {
                 if ($idUser) {
-                    $data =$request->validated();
+                    $data = $request->validated();
                     $user = User::findOrFail($idUser)->fill($data);
                     // $user->fill($data);
                     $user->save();
                     $new = new UserResource($user);
-                    return $new;        
+                    return $new;
                 } else {
                     return response()->json(['message' => 'Utente non trovato'], 404);
                 }
@@ -140,13 +159,13 @@ class UserController extends Controller
                 //Cancello tutti i dati riguardo all'utente
                 $utente = User::findOrFail($id);
                 $utente->delete();
-                $anagrafica = Anagrafica_utenti::where('idUser',$id);
+                $anagrafica = Anagrafica_utenti::where('idUser', $id);
                 $anagrafica->delete();
-                $recapiti = contatti_recapiti::where('idUser',$id);
+                $recapiti = contatti_recapiti::where('idUser', $id);
                 $recapiti->delete();
-                $sessioni = ContattoSessioni::where('idUser',$id);
+                $sessioni = ContattoSessioni::where('idUser', $id);
                 $sessioni->delete();
-                $indirizzi = Indirizzo::where('idUser',$id);
+                $indirizzi = Indirizzo::where('idUser', $id);
                 $indirizzi->delete();
 
                 return response()->json([
@@ -160,7 +179,7 @@ class UserController extends Controller
      * 
      * 
      */
-    public function destroyAdmin( $idUser)
+    public function destroyAdmin($idUser)
     {
         if (Gate::allows('user')) {
             if (Gate::allows('attivo')) {

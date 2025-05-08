@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('film', function (Blueprint $table) {
             $table->id('idFilm');
             $table->unsignedBigInteger('idGenere')->unsigned();
+            $table->string('generi_secondari', 50)->nullable();
             $table->string('titolo',45);
             $table->string('trama', 255)->nullable();
             $table->string('regista',45);
@@ -23,6 +24,7 @@ return new class extends Migration
             $table->string('path_img',100);
             $table->timestamps();
             $table->softDeletes();
+            
             $table->foreign('idGenere')->references('idGenere')->on('generi');
 
         });

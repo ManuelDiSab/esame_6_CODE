@@ -16,7 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('idUser')->unsigned();
             $table->string('tel',50);
             $table->timestamps();
-
+            $table->softDeletes();
+            
             $table->foreign("idUser")->references("idUser")->on("users");
         });
     }

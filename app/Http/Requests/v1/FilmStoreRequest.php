@@ -30,7 +30,7 @@ class FilmStoreRequest extends FormRequest
             'anno'=>'required|string',
             'voto'=>'required|string|min:1',
             'generi_secondari'=>'string|min:3',
-            'path_img'=> 'required|image|mimes:jpeg,pbg,jpg|max:4048'
+            'path_img'=> 'required|image|mimes:jpeg,pbg,jpg,webp|max:4048'   
         ];
     }
 }
